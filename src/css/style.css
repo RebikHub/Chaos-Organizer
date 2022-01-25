@@ -3,8 +3,20 @@
     padding: 0;
 }
 
+::-webkit-input-placeholder {
+    color: aliceblue;
+ }
+ :-moz-placeholder {
+    color: aliceblue;
+ }
+ :-ms-input-placeholder {
+    color: aliceblue;
+ }
+
 body {
     position: relative;
+    color: aliceblue;
+    background-color: #bcbcbc;
 }
 
 button {
@@ -24,8 +36,10 @@ button {
     border: 1px solid black;
     border-radius: 7px;
     width: 100%;
-    height: 87%;
+    height: 92%;
     overflow: auto;
+    filter: drop-shadow(2px 3px 3px rgb(87, 87, 202));
+    background-color: #40406f;
 }
 
 .organizer-input {
@@ -34,15 +48,17 @@ button {
     border-radius: 7px;
     margin-top: auto;
     width: 100%;
-    height: 10%;
+    height: 7%;
+    filter: drop-shadow(2px 3px 3px rgb(87, 87, 202));
+    background-color: #40406f;
 }
 
 .organizer-input-text {
-    margin: 3px;
+    margin: 5px;
     padding-left: 3px;
     padding-top: 3px;
     width: 80%;
-    border: none;
+    border: 1px solid black;
     resize: none;
 }
 
@@ -57,11 +73,17 @@ button {
 }
 
 .input-btn {
-    margin: auto 9px auto auto;
-    width: 52px;
-    height: 52px;
+    margin: auto 1px;
+    width: 36px;
+    height: 36px;
     border: 1px solid black;
     border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.input-btn:hover {
+    cursor: pointer;
 }
 
 .timer {
@@ -72,32 +94,35 @@ button {
 }
 
 .organizer-input-audio {
-    background-size: calc(100% - 12px);
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url(../image/audio.png);
 }
 
-.image-audio {
-    background-image: url(../image/microphone.png);
-}
 
 .image-ok {
     background-image: url(../image/check.png);
 }
 
-.organizer-input-video {
-    background-size: calc(100% - 10px);
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.image-video {
-    background-image: url(../image/video_camera.png);
-}
-
 .image-cancel {
     background-image: url(../image/cancel.png);
     background-size: auto;
+}
+
+
+.organizer-input-video {
+    background-image: url(../image/camera.png);
+}
+
+.organizer-input-enter {
+    background-image: url(../image/send.png);
+}
+.organizer-input-image {
+    background-image: url(../image/img.png);
+}
+.organizer-input-file {
+    background-image: url(../image/file.png);
+}
+.organizer-input-geo {
+    background-image: url(../image/geo.png);
 }
 
 .modal {
@@ -182,6 +207,7 @@ button {
     margin: 4px auto 0 auto;
     border: 1px solid black;
     border-radius: 5px;
+    background-color: #6363bd;
 }
 
 .record-date {

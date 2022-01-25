@@ -1,7 +1,6 @@
-import validate from './validateCoordinates';
-import geolocation from './geolocation';
 import Record from './record';
 import notificationBox from './notification';
+import Server from './server';
 
 export default class Organizer {
   constructor() {
@@ -10,12 +9,14 @@ export default class Organizer {
     this.message = null;
     this.modal = document.querySelector('.modal');
     this.modalInput = document.querySelector('.modal-input-text');
-    this.coordinates = null;
     this.ok = document.querySelector('.modal-ok');
     this.cancel = document.querySelector('.modal-cancel');
     this.error = document.querySelector('.input-error');
     this.audioBtn = document.querySelector('.organizer-input-audio');
     this.videoBtn = document.querySelector('.organizer-input-video');
+    this.enterBtn = document.querySelector('.organizer-input-enter');
+    this.imageBtn = document.querySelector('.organizer-input-image');
+    this.geoBtn = document.querySelector('.organizer-input-geo');
     this.timer = document.querySelector('.timer');
     this.recorder = null;
     this.createElement = null;
@@ -27,50 +28,34 @@ export default class Organizer {
   events() {
     this.inputText();
     this.inputTextEnter();
-    this.inputCoordinates();
-    this.clickModalOk();
-    this.clickModalCancel();
+    this.inputTextClickBtnEnter();
     this.clickAudioVideo(this.videoBtn);
     this.clickAudioVideo(this.audioBtn);
   }
 
   addRecord(content) {
-    if (this.coordinates === null) {
-      this.modal.classList.remove('none');
+    const record = document.createElement('div');
+    const date = document.createElement('div');
+    record.appendChild(date);
+
+    if (typeof content === 'string') {
+      const contents = document.createElement('div');
+      record.appendChild(contents);
+      contents.textContent = content.trim();
     } else {
-      const record = document.createElement('div');
-      const date = document.createElement('div');
-      const coordinates = document.createElement('div');
-      const numCoordinates = document.createElement('p');
-      const imgCoordinates = document.createElement('div');
-      coordinates.appendChild(numCoordinates);
-      coordinates.appendChild(imgCoordinates);
-      record.appendChild(date);
-
-      if (typeof content === 'string') {
-        const contents = document.createElement('div');
-        record.appendChild(contents);
-        contents.textContent = content.trim();
-      } else {
-        record.appendChild(content);
-      }
-
-      record.appendChild(coordinates);
-      record.classList.add('record');
-      date.classList.add('record-date');
-      imgCoordinates.classList.add('img-coordinates');
-      coordinates.classList.add('coordinates');
-      date.textContent = Timeline.getDate();
-      this.organizerRecords.appendChild(record);
-      numCoordinates.textContent = this.coordinates;
-      this.message = null;
-      this.createElement = null;
-      this.coordinates = null;
+      record.appendChild(content);
     }
-  }
 
-  async geo() {
-    this.coordinates = await geolocation();
+    record.classList.add('record');
+    date.classList.add('record-date');
+    date.textContent = Organizer.getDate();
+    this.organizerRecords.appendChild(record);
+    // Server.saveStore({
+    //   message: this.message,
+    //   date: Organizer.getDate(),
+    // });
+    this.message = null;
+    this.createElement = null;
   }
 
   timerRec() {
@@ -97,20 +82,20 @@ export default class Organizer {
   }
 
   async transformButtonsOn() {
-    await this.geo();
+    // тут был запрос на геопозицию
     this.timer.classList.remove('none');
     this.timerRec();
-    this.videoBtn.classList.remove('image-video');
+    this.videoBtn.classList.remove('organizer-input-video');
     this.videoBtn.classList.add('image-cancel');
-    this.audioBtn.classList.remove('image-audio');
+    this.audioBtn.classList.remove('organizer-input-audio');
     this.audioBtn.classList.add('image-ok');
   }
 
   transformButtonsOff() {
     this.timer.classList.add('none');
-    this.videoBtn.classList.add('image-video');
+    this.videoBtn.classList.add('organizer-input-video');
     this.videoBtn.classList.remove('image-cancel');
-    this.audioBtn.classList.add('image-audio');
+    this.audioBtn.classList.add('organizer-input-audio');
     this.audioBtn.classList.remove('image-ok');
   }
 
@@ -140,9 +125,9 @@ export default class Organizer {
 
   clickAudioVideo(element) {
     element.addEventListener('click', () => {
-      if (this.timer.classList.contains('none') && element.classList.contains('image-audio')) {
+      if (this.timer.classList.contains('none') && element.classList.contains('organizer-input-audio')) {
         this.record('audio');
-      } else if (this.timer.classList.contains('none') && element.classList.contains('image-video')) {
+      } else if (this.timer.classList.contains('none') && element.classList.contains('organizer-input-video')) {
         this.record('video');
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-ok')) {
         this.cancelRecord();
@@ -159,59 +144,21 @@ export default class Organizer {
     });
   }
 
-  async inputTextEnter() {
+  inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', (ev) => {
       if (ev.key === 'Enter' && this.message !== null) {
-        this.requestGeo();
-      }
-    });
-  }
-
-  async requestGeo() {
-    await this.geo();
-
-    if (this.coordinates !== null) {
-      this.addRecord(this.message);
-      this.organizerInputText.value = null;
-    } else if (this.coordinates === null) {
-      this.modal.classList.remove('none');
-      this.organizerInputText.value = null;
-    }
-  }
-
-  inputCoordinates() {
-    this.modalInput.addEventListener('input', (ev) => {
-      const coordinates = ev.target.value;
-      const coorArr = coordinates.split(',');
-      const latitude = coorArr[0].trim();
-      const longitude = coorArr[1].trim();
-      if (validate(coordinates)) {
-        this.coordinates = `[${latitude}, ${longitude}]`;
-      }
-    });
-  }
-
-  clickModalOk() {
-    this.ok.addEventListener('click', () => {
-      if (this.coordinates === null) {
-        this.inputError();
-      } else if (this.message !== null) {
-        this.modal.classList.add('none');
         this.addRecord(this.message);
-        this.modalInput.value = null;
-      } else if (this.createElement !== null) {
-        this.modal.classList.add('none');
-        this.addRecord(this.createElement);
-        this.modalInput.value = null;
+        this.organizerInputText.value = null;
       }
     });
   }
 
-  clickModalCancel() {
-    this.cancel.addEventListener('click', () => {
-      this.coordinates = null;
-      this.modalInput.value = null;
-      this.modal.classList.toggle('none');
+  inputTextClickBtnEnter() {
+    this.enterBtn.addEventListener('click', () => {
+      if (this.message !== null && this.organizerInputText.value !== null) {
+        this.addRecord(this.message);
+        this.organizerInputText.value = null;
+      }
     });
   }
 

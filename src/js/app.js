@@ -1,7 +1,7 @@
-import Timeline from './timeline';
+import Organizer from './organizer';
 
 console.log('app started');
 
-const timeline = new Timeline();
+const organizer = new Organizer();
 
-timeline.events();
+organizer.events();

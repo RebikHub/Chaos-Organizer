@@ -9,8 +9,6 @@ export default async function notificationBox() {
     requireInteraction: true,
   });
 
-  console.log(Notification.permission);
-
   if (Notification.permission === 'granted') {
     return;
   }
