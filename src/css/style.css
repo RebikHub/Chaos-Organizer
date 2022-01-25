@@ -3,6 +3,28 @@
     padding: 0;
 }
 
+@media (max-width: 800px) {
+    #organizer {
+        display: flex;
+        position: relative;
+        width: 99%;
+        height: 99%;
+        margin: auto;
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 800px) {
+    #organizer {
+        display: flex;
+        position: relative;
+        width: 600px;
+        height: 800px;
+        margin: 20px auto auto auto;
+        flex-direction: column;
+    }
+}
+
 ::-webkit-input-placeholder {
     color: aliceblue;
  }
@@ -23,23 +45,14 @@ button {
     background-color: white;
 }
 
-#organizer {
-    display: flex;
-    position: relative;
-    width: 600px;
-    height: 800px;
-    margin: 20px auto auto auto;
-    flex-direction: column;
-}
-
 .organizer-records {
     border: 1px solid black;
     border-radius: 7px;
     width: 100%;
-    height: 92%;
+    height: 94%;
     overflow: auto;
-    filter: drop-shadow(2px 3px 3px rgb(87, 87, 202));
-    background-color: #40406f;
+    filter: drop-shadow(2px 3px 3px rgb(66, 66, 187));
+    background-color: #252540;
 }
 
 .organizer-input {
@@ -48,7 +61,7 @@ button {
     border-radius: 7px;
     margin-top: auto;
     width: 100%;
-    height: 7%;
+    height: 5%;
     filter: drop-shadow(2px 3px 3px rgb(87, 87, 202));
     background-color: #40406f;
 }
@@ -58,8 +71,12 @@ button {
     padding-left: 3px;
     padding-top: 3px;
     width: 80%;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     resize: none;
+    background-color: inherit;
+    border: none;
+    color: aliceblue;
+    font-size: 1rem;
 }
 
 .organizer-input-text:focus {
@@ -73,11 +90,13 @@ button {
 }
 
 .input-btn {
-    margin: auto 1px;
+    margin: auto 3px;
     width: 36px;
     height: 36px;
-    border: 1px solid black;
-    border-radius: 50%;
+    border: none;
+    /* border: 1px solid black; */
+    /* border-radius: 50%; */
+    background-color: initial;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -99,7 +118,7 @@ button {
 
 
 .image-ok {
-    background-image: url(../image/check.png);
+    background-image: url(../image/ok.png);
 }
 
 .image-cancel {
@@ -113,6 +132,7 @@ button {
 }
 
 .organizer-input-enter {
+    background-position: left;
     background-image: url(../image/send.png);
 }
 .organizer-input-image {

@@ -1,9 +1,9 @@
 import Record from './record';
 import notificationBox from './notification';
-import Server from './server';
 
 export default class Organizer {
-  constructor() {
+  constructor(server) {
+    this.server = server;
     this.organizerRecords = document.querySelector('.organizer-records');
     this.organizerInputText = document.querySelector('.organizer-input-text');
     this.message = null;
@@ -26,6 +26,7 @@ export default class Organizer {
   }
 
   events() {
+    this.organizerInputText.focus();
     this.inputText();
     this.inputTextEnter();
     this.inputTextClickBtnEnter();
@@ -42,7 +43,7 @@ export default class Organizer {
       const contents = document.createElement('div');
       record.appendChild(contents);
       contents.textContent = content.trim();
-    } else {
+    } else { // здесь нужно добавить проверку на http:// и обернуть в ссылку
       record.appendChild(content);
     }
 
@@ -50,10 +51,10 @@ export default class Organizer {
     date.classList.add('record-date');
     date.textContent = Organizer.getDate();
     this.organizerRecords.appendChild(record);
-    // Server.saveStore({
-    //   message: this.message,
-    //   date: Organizer.getDate(),
-    // });
+    this.server.saveStore({
+      message: this.message,
+      date: new Date().getTime(),
+    });
     this.message = null;
     this.createElement = null;
   }
@@ -140,7 +141,7 @@ export default class Organizer {
 
   inputText() {
     this.organizerInputText.addEventListener('input', (ev) => {
-      this.message = ev.target.value;
+      this.message = ev.target.value.replace(/\n/g, '');
     });
   }
 

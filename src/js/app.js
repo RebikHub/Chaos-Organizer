@@ -1,7 +1,9 @@
 import Organizer from './organizer';
+import Server from './server';
 
 console.log('app started');
 
-const organizer = new Organizer();
+const server = new Server();
+const organizer = new Organizer(server);
 
 organizer.events();
