@@ -1,5 +1,6 @@
 export default class DnD {
   constructor() {
+    this.orgRecords = document.querySelector('.organizer-records');
     this.dropBox = document.querySelector('.drop-box');
     this.dndInput = document.querySelector('.dnd-input');
     this.textName = null;
@@ -14,14 +15,28 @@ export default class DnD {
 
   events() {
     this.dragEnter();
+    this.dragLeave();
+    this.dragEnd();
   }
 
   dragEnter() {
-    this.dropBox.addEventListener('dragenter', (ev) => {
+    this.orgRecords.addEventListener('dragenter', (ev) => {
       console.log(ev.target);
-      if (ev.target.className === 'drop-box') {
-        this.dropBox.classList.remove('none');
-      }
+      this.dropBox.classList.remove('none');
+    });
+  }
+
+  dragLeave() {
+    this.dndInput.addEventListener('dragleave', (ev) => {
+      console.log(ev.target);
+      this.dropBox.classList.add('none');
+    });
+  }
+
+  dragEnd() {
+    this.dndInput.addEventListener('drop', (ev) => {
+      console.log(ev.dataTransfer.files);
+      this.dropBox.classList.add('none');
     });
   }
 
