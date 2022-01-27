@@ -39,11 +39,21 @@ export default class Organizer {
     const date = document.createElement('div');
     record.appendChild(date);
 
-    if (typeof content === 'string') {
+    if (typeof content === 'string' && (/^https:\/\//.test(content) || /^http:\/\//.test(content))) {
+      const contents = document.createElement('div');
+      const link = document.createElement('a');
+      content.trim();
+      link.href = content;
+      link.target = '_blank';
+      link.style.color = 'aliceblue';
+      link.textContent = content;
+      contents.append(link);
+      record.appendChild(contents);
+    } else if (typeof content === 'string') {
       const contents = document.createElement('div');
       record.appendChild(contents);
       contents.textContent = content.trim();
-    } else { // здесь нужно добавить проверку на http:// и обернуть в ссылку
+    } else {
       record.appendChild(content);
     }
 

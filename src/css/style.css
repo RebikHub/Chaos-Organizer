@@ -5,6 +5,7 @@
 
 @media (max-width: 800px) {
     #organizer {
+        position: relative;
         display: flex;
         position: relative;
         width: 99%;
@@ -16,6 +17,7 @@
 
 @media (min-width: 800px) {
     #organizer {
+        position: relative;
         display: flex;
         position: relative;
         width: 600px;
@@ -34,6 +36,16 @@
  :-ms-input-placeholder {
     color: aliceblue;
  }
+
+ ::-webkit-scrollbar {
+    width: 5px;
+    background-color: #252540;
+}
+
+ ::-webkit-scrollbar-thumb {
+    width: 5px;
+    background-color: #555555;
+}
 
 body {
     position: relative;
@@ -71,7 +83,6 @@ button {
     padding-left: 3px;
     padding-top: 3px;
     width: 80%;
-    /* border: 1px solid black; */
     resize: none;
     background-color: inherit;
     border: none;
@@ -94,8 +105,6 @@ button {
     width: 36px;
     height: 36px;
     border: none;
-    /* border: 1px solid black; */
-    /* border-radius: 50%; */
     background-color: initial;
     background-repeat: no-repeat;
     background-position: center;
@@ -106,9 +115,6 @@ button {
 }
 
 .timer {
-    font-size: x-large;
-    align-self: center;
-    width: 60px;
     margin: auto;
 }
 
@@ -252,6 +258,30 @@ button {
     top: -8px;
     background-color: rgb(252, 146, 146);
     border: 1px solid black;
+}
+
+.drop-box {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    width: 96%;
+    height: 96%;
+    background-color:#40406f;
+    filter: drop-shadow(2px 3px 3px rgb(37, 37, 129));
+}
+
+.dnd-label {
+    position: absolute;
+    color:#bcbcbc;
+    top: 40%;
+    left: 25%;
+    font-size: x-large;
+}
+
+.dnd-input {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
 }
 
 .none {
