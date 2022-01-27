@@ -1,11 +1,11 @@
 export default class Server {
   constructor() {
-    this.url = 'http://localhost:3333/';
+    this.url = 'http://localhost:3333';
     this.store = new Set();
   }
 
-  async saveStore(data) {
-    const response = await fetch(this.url, {
+  async saveMessages(data) {
+    const response = await fetch(`${this.url}/messages`, {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -18,6 +18,14 @@ export default class Server {
       body: JSON.stringify(data),
     });
     return response.json();
+  }
+
+  async saveUploads(data) {
+    const response = await fetch(`${this.url}/uploads`, {
+      method: 'POST',
+      body: data,
+    });
+    return response.text();
   }
 
   async loadMessages() {

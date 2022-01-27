@@ -1,5 +1,8 @@
+import Organizer from './organizer';
+
 export default class DnD {
-  constructor() {
+  constructor(server) {
+    this.server = server;
     this.orgRecords = document.querySelector('.organizer-records');
     this.dropBox = document.querySelector('.drop-box');
     this.dndInput = document.querySelector('.dnd-input');
@@ -35,109 +38,64 @@ export default class DnD {
 
   dragEnd() {
     this.dndInput.addEventListener('drop', (ev) => {
-      console.log(ev.dataTransfer.files);
+      ev.preventDefault();
       this.dropBox.classList.add('none');
+      console.log(ev.dataTransfer.files);
+
+      for (const i of ev.dataTransfer.files) {
+        if (i.type.includes('image')) {
+          this.createDataImage(i);
+        } else {
+          this.inputAndConvert(i);
+        }
+        console.log(i);
+        // const formData = new FormData();
+        // this.server.saveUploads(formData.set('dropFile', i));
+      }
     });
   }
 
-  sendImage() {
-    const formData = new FormData();
-
-    if (this.img.file) {
-      formData.append('file', this.img.file);
-      formData.append('name', this.img.name);
-      formData.append('url', this.img.url);
-      this.memory.save(formData);
-    } else {
-      formData.append('name', this.img.name);
-      formData.append('url', this.img.url);
-      this.memory.save(formData);
-    }
-    this.update = false;
-    this.img.url = null;
-    this.img.name = null;
-    this.img.file = null;
+  createDataFile(data, dataLink) {
+    const dataFile = document.createElement('div');
+    const name = document.createElement('p');
+    const size = document.createElement('p');
+    const link = document.createElement('a');
+    link.classList.add('link-download');
+    dataFile.classList.add('drop-file');
+    name.textContent = data.name;
+    size.textContent = `Size: ${Number((data.size / 1048576).toFixed(2))} Mb`;
+    link.href = dataLink;
+    link.setAttribute('download', `${data.name}`);
+    dataFile.append(link);
+    dataFile.append(name);
+    dataFile.append(size);
+    this.orgRecords.append(Organizer.createRecord(dataFile));
   }
 
-  addBlockWithImg(url, name, file) {
+  inputAndConvert(file) {
+    const fileReader = new FileReader();
+    fileReader.onload = (ev) => this.createDataFile(file, ev.target.result);
+
+    fileReader.readAsDataURL(file);
+  }
+
+  createDataImage(file) {
+    const url = URL.createObjectURL(file);
     if (url) {
       const image = document.createElement('img');
       image.src = url;
-      image.alt = name;
+      image.alt = file.name;
       this.img.url = url;
-      this.img.name = name;
+      this.img.name = file.name;
       this.img.file = file;
-
-      image.onerror = () => this.verifyUrl();
       image.onload = () => this.addImage(image);
     }
-    this.inputName.value = null;
-    this.inputSrc.value = null;
-    this.textName = null;
-    this.textSrc = null;
   }
 
   addImage(image) {
     const divImg = document.createElement('div');
-    const span = document.createElement('span');
     divImg.classList.add('image');
-    span.classList.add('close-image');
     divImg.appendChild(image);
-    divImg.appendChild(span);
-    this.imgsList.appendChild(divImg);
-    if (this.update) {
-      this.sendImage();
-    }
-    this.removeImage();
-  }
-
-  verifyUrl() {
-    this.errorDiv.style = 'display: block';
-    this.errorDiv.style.left = `${this.inputSrc.offsetLeft}px`;
-    this.errorDiv.style.top = `${this.inputSrc.offsetTop + this.inputSrc.offsetHeight}px`;
-  }
-
-  closeErrorBlock() {
-    if (this.errorDiv.style.display === 'block') {
-      this.errorDiv.style.display = 'none';
-    }
-  }
-
-  closeDownload() {
-    if (this.widget.classList.contains('none')) {
-      this.widget.classList.remove('none');
-      this.dnd.classList.add('none');
-    }
-  }
-
-  dndClick(ev) {
-    const files = Array.from(ev.currentTarget.files);
-    const url = URL.createObjectURL(files[0]);
-    this.update = true;
-    this.addBlockWithImg(url, files[0].name, files[0]);
-  }
-
-  drop() {
-    this.dndInput.addEventListener('dragover', (ev) => {
-      ev.preventDefault();
-    });
-    this.dndInput.addEventListener('drop', (ev) => {
-      ev.preventDefault();
-      const files = Array.from(ev.dataTransfer.files);
-      const url = URL.createObjectURL(files[0]);
-      this.update = true;
-      this.addBlockWithImg(url, files[0].name, files[0]);
-    });
-  }
-
-  removeImage() {
-    for (const item of document.querySelectorAll('.close-image')) {
-      item.addEventListener('click', () => {
-        item.closest('.image').remove();
-        const id = item.closest('.image').children[0].alt;
-        this.update = false;
-        this.memory.delete(id);
-      });
-    }
+    this.orgRecords.appendChild(Organizer.createRecord(divImg));
   }
 }

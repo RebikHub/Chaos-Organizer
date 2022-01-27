@@ -284,6 +284,35 @@ button {
     opacity: 0;
 }
 
+.image {
+    max-width: 80%;
+    height: auto;
+}
+
+.image img {
+    max-width: 30%;
+}
+
+.drop-file {
+    display: flex;
+}
+
+.drop-file > p {
+    align-self: center;
+    margin: 15px;
+}
+
+.link-download {
+    margin: 2px;
+    width: 3rem;
+    height: 3rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    background-color: aliceblue;
+    background-image: url(../image/download.png);
+}
+
 .none {
     display: none;
 }

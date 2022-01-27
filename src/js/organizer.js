@@ -34,11 +34,8 @@ export default class Organizer {
     this.clickAudioVideo(this.audioBtn);
   }
 
-  addRecord(content) {
-    const record = document.createElement('div');
-    const date = document.createElement('div');
-    record.appendChild(date);
-
+  static createTextInputRecord(div, content) {
+    console.log(content);
     if (typeof content === 'string' && (/^https:\/\//.test(content) || /^http:\/\//.test(content))) {
       const contents = document.createElement('div');
       const link = document.createElement('a');
@@ -48,25 +45,39 @@ export default class Organizer {
       link.style.color = 'aliceblue';
       link.textContent = content;
       contents.append(link);
-      record.appendChild(contents);
+      div.appendChild(contents);
     } else if (typeof content === 'string') {
       const contents = document.createElement('div');
-      record.appendChild(contents);
+      div.appendChild(contents);
       contents.textContent = content.trim();
     } else {
-      record.appendChild(content);
+      div.appendChild(content);
     }
+  }
 
+  static createRecord(content) {
+    const record = document.createElement('div');
+    const date = document.createElement('div');
     record.classList.add('record');
     date.classList.add('record-date');
     date.textContent = Organizer.getDate();
+    record.appendChild(date);
+
+    Organizer.createTextInputRecord(record, content);
+
+    return record;
+  }
+
+  addDataToOrgRecords(record) {
     this.organizerRecords.appendChild(record);
-    this.server.saveStore({
-      message: this.message,
-      date: new Date().getTime(),
-    });
-    this.message = null;
-    this.createElement = null;
+    if (this.message !== null) {
+      this.server.saveMessages({
+        message: this.message,
+        date: new Date().getTime(),
+      });
+      this.message = null;
+      this.createElement = null;
+    }
   }
 
   timerRec() {
@@ -142,7 +153,8 @@ export default class Organizer {
         this.record('video');
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-ok')) {
         this.cancelRecord();
-        this.addRecord(this.createElement);
+        const record = Organizer.createRecord(this.createElement);
+        this.addDataToOrgRecords(record);
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-cancel')) {
         this.cancelRecord();
       }
@@ -158,7 +170,8 @@ export default class Organizer {
   inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', (ev) => {
       if (ev.key === 'Enter' && this.message !== null) {
-        this.addRecord(this.message);
+        const record = Organizer.createRecord(this.message);
+        this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
       }
     });
