@@ -4,8 +4,10 @@ import notificationBox from './notification';
 export default class Organizer {
   constructor(server) {
     this.server = server;
+    this.organizer = document.getElementById('organizer');
     this.organizerRecords = document.querySelector('.organizer-records');
     this.organizerInputText = document.querySelector('.organizer-input-text');
+
     this.message = null;
     this.modal = document.querySelector('.modal');
     this.modalInput = document.querySelector('.modal-input-text');
@@ -32,10 +34,10 @@ export default class Organizer {
     this.inputTextClickBtnEnter();
     this.clickAudioVideo(this.videoBtn);
     this.clickAudioVideo(this.audioBtn);
+    this.pinnedContent();
   }
 
   static createTextInputRecord(div, content) {
-    console.log(content);
     if (typeof content === 'string' && (/^https:\/\//.test(content) || /^http:\/\//.test(content))) {
       const contents = document.createElement('div');
       const link = document.createElement('a');
@@ -47,7 +49,8 @@ export default class Organizer {
       contents.append(link);
       div.appendChild(contents);
     } else if (typeof content === 'string') {
-      const contents = document.createElement('div');
+      const contents = document.createElement('p');
+      contents.className = 'record-text';
       div.appendChild(contents);
       contents.textContent = content.trim();
     } else {
@@ -57,15 +60,41 @@ export default class Organizer {
 
   static createRecord(content) {
     const record = document.createElement('div');
+    const recTitle = document.createElement('div');
     const date = document.createElement('div');
+    const attach = document.createElement('div');
+    recTitle.classList.add('record-title');
+    attach.classList.add('record-attach');
     record.classList.add('record');
     date.classList.add('record-date');
     date.textContent = Organizer.getDate();
-    record.appendChild(date);
+    recTitle.append(attach);
+    recTitle.append(date);
+    record.append(recTitle);
 
     Organizer.createTextInputRecord(record, content);
 
     return record;
+  }
+
+  pinnedContent() {
+    this.organizerRecords.addEventListener('click', (ev) => {
+      const box = ev.target.closest('.record');
+      for (const i of document.querySelectorAll('.record')) {
+        if (i === box) {
+          if (this.organizer.querySelector('.record-pin')) {
+            this.organizer.querySelector('.record-pin').remove();
+          }
+          const clone = i.cloneNode(true);
+          clone.querySelector('.record-title').classList.add('pin-close');
+          clone.querySelector('.record-title').classList.toggle('record-title');
+          clone.querySelector('.pin-close').textContent = '';
+          clone.className = 'record-pin';
+          this.organizer.append(clone);
+          console.log('ok');
+        }
+      }
+    });
   }
 
   addDataToOrgRecords(record) {
@@ -180,15 +209,11 @@ export default class Organizer {
   inputTextClickBtnEnter() {
     this.enterBtn.addEventListener('click', () => {
       if (this.message !== null && this.organizerInputText.value !== null) {
-        this.addRecord(this.message);
+        const record = Organizer.createRecord(this.message);
+        this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
       }
     });
-  }
-
-  inputError() {
-    this.error.classList.remove('none');
-    setTimeout(() => this.error.classList.add('none'), 3000);
   }
 
   static getDate() {

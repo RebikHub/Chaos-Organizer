@@ -14,8 +14,9 @@
             <textarea class="organizer-input-text" placeholder="Написать сообщение..."></textarea>
             <div class="organizer-input-buttons">
                 <button type="button" class="organizer-input-enter input-btn"></button>
-                <button type="button" class="organizer-input-image input-btn"></button>
-                <button type="button" class="organizer-input-file input-btn"></button>
+                <button type="button" class="organizer-input-file input-btn">
+                    <input type="file" class="input-file-btn" multiple required>
+                </button>
                 <button type="button" class="organizer-input-geo input-btn"></button>
                 <button type="button" class="organizer-input-audio input-btn"></button>
                 <div class="timer none"></div>
@@ -25,7 +26,7 @@
 
         <div class="drop-box none">
             <label for="dnd-input" class="dnd-label">Перетащите Сюда файлы</label>
-            <input type="file" class="dnd-input" multiple>
+            <input type="file" class="dnd-input" multiple required>
         </div>
 
         <div class="modal none">
@@ -35,7 +36,7 @@
             </div>
             <div class="modale-input">
                 <h4 class="modal-input-title">Широта и долгота через запятую</h4>
-                <input type="text" class="modal-input-text" placeholder="00.00, 00.00">
+                <input type="text" class="modal-input-text" placeholder="00.00, 00.00" required>
                 <div class="modal-input-buttons">
                     <div class="input-error none">Неверный формат данных</div>
                     <button type="button" class="modal-cancel btn">Отмена</button>
