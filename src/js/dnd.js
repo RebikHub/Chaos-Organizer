@@ -98,6 +98,7 @@ export default class DnD {
   createDataImage(file) {
     const url = URL.createObjectURL(file);
     const image = document.createElement('img');
+    image.className = 'drop-image';
     image.src = url;
     image.alt = file.name;
     image.onload = () => this.addImage(image);
@@ -105,8 +106,13 @@ export default class DnD {
 
   addImage(image) {
     const divImg = document.createElement('div');
+    const name = document.createElement('p');
+    const link = document.createElement('a');
+    link.classList.add('link-download');
+    name.classList.add('drop-file-name');
     divImg.classList.add('image');
-    divImg.appendChild(image);
+    divImg.append(link);
+    divImg.append(image);
     this.orgRecords.appendChild(Organizer.createRecord(divImg));
   }
 }

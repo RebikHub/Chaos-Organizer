@@ -58,6 +58,9 @@ button {
 }
 
 .organizer-records {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     border: 1px solid black;
     border-radius: 7px;
     width: 100%;
@@ -232,8 +235,6 @@ button {
     max-width: -webkit-fill-available;
     width: fit-content;
     margin: 4px 0 0 auto;
-    /* width: 95%;
-    margin: 4px auto 0 auto; */
     border: 1px solid black;
     border-radius: 5px;
     background-color: #6363bd;
@@ -241,8 +242,9 @@ button {
 
 .record-pin {
     display: flex;
+    align-items: center;
     position: absolute;
-    height: 5%;
+    height: 8%;
     top: 0;
     left: 0;
     right: 0;
@@ -338,12 +340,20 @@ button {
 }
 
 .image {
-    max-width: 80%;
-    height: auto;
+    display: flex;
 }
 
-.image img {
-    max-width: 30%;
+.drop-image {
+    width: 300px;
+    height: 168px;
+    object-fit: fill;
+}
+
+.pin-image {
+    width: 90px;
+    height: 50px;
+    margin-left: 10px;
+    align-self: center;
 }
 
 .drop-file {
@@ -351,17 +361,16 @@ button {
     justify-content: space-between;
 }
 
-.drop-file > p {
+.drop-file-name {
     align-self: center;
     margin: 15px;
-}
-
-.drop-file-name {
-    width: 60%;
     word-break: break-all;
 }
 
 .drop-file-size {
+    align-self: center;
+    margin: 15px;
+    margin: 2px;
     font-size: small;
 }
 
@@ -376,6 +385,7 @@ button {
 }
 
 .link-download {
+    align-self: flex-end;
     margin: 2px;
     width: 3rem;
     height: 3rem;

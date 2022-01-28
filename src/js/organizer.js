@@ -35,6 +35,7 @@ export default class Organizer {
     this.clickAudioVideo(this.videoBtn);
     this.clickAudioVideo(this.audioBtn);
     this.pinnedContent();
+    this.closePinned();
   }
 
   static createTextInputRecord(div, content) {
@@ -79,20 +80,31 @@ export default class Organizer {
 
   pinnedContent() {
     this.organizerRecords.addEventListener('click', (ev) => {
-      const box = ev.target.closest('.record');
-      for (const i of document.querySelectorAll('.record')) {
-        if (i === box) {
-          if (this.organizer.querySelector('.record-pin')) {
-            this.organizer.querySelector('.record-pin').remove();
+      if (ev.target.classList.contains('record-attach')) {
+        const box = ev.target.closest('.record');
+        for (const i of document.querySelectorAll('.record')) {
+          if (i === box) {
+            if (this.organizer.querySelector('.record-pin')) {
+              this.organizer.querySelector('.record-pin').remove();
+            }
+            const clone = i.cloneNode(true);
+            clone.querySelector('.record-title').classList.add('pin-close');
+            clone.querySelector('.pin-close').classList.remove('record-title');
+            clone.querySelector('.pin-close').textContent = '';
+            clone.querySelector('.drop-image').classList.add('pin-image');
+            clone.querySelector('.pin-image').classList.remove('drop-image');
+            clone.className = 'record-pin';
+            this.organizer.append(clone);
           }
-          const clone = i.cloneNode(true);
-          clone.querySelector('.record-title').classList.add('pin-close');
-          clone.querySelector('.record-title').classList.toggle('record-title');
-          clone.querySelector('.pin-close').textContent = '';
-          clone.className = 'record-pin';
-          this.organizer.append(clone);
-          console.log('ok');
         }
+      }
+    });
+  }
+
+  closePinned() {
+    this.organizer.addEventListener('click', (ev) => {
+      if (ev.target.classList.contains('pin-close')) {
+        this.organizer.querySelector('.record-pin').remove();
       }
     });
   }
