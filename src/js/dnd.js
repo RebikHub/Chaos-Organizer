@@ -53,6 +53,13 @@ export default class DnD {
     });
   }
 
+  static createSendFile(data) {
+    const formData = new FormData();
+    formData.append(data.name, data);
+    console.log(data.name, data);
+    return formData;
+  }
+
   renderInputFile(files) {
     for (const i of files) {
       if (i.type.includes('image')) {
@@ -61,8 +68,7 @@ export default class DnD {
         this.inputAndConvert(i);
       }
       console.log(i);
-      // const formData = new FormData();
-      // this.server.saveUploads(formData.set('dropFile', i));
+      this.server.saveUploads(DnD.createSendFile(i));
     }
   }
 

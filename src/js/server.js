@@ -7,14 +7,6 @@ export default class Server {
   async saveMessages(data) {
     const response = await fetch(`${this.url}/messages`, {
       method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
       body: JSON.stringify(data),
     });
     return response.json();
@@ -25,7 +17,7 @@ export default class Server {
       method: 'POST',
       body: data,
     });
-    return response.text();
+    const fd = await response.json();
   }
 
   async loadMessages() {
