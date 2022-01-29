@@ -91,8 +91,10 @@ export default class Organizer {
             clone.querySelector('.record-title').classList.add('pin-close');
             clone.querySelector('.pin-close').classList.remove('record-title');
             clone.querySelector('.pin-close').textContent = '';
-            clone.querySelector('.drop-image').classList.add('pin-image');
-            clone.querySelector('.pin-image').classList.remove('drop-image');
+            if (clone.querySelector('.drop-image')) {
+              clone.querySelector('.drop-image').classList.add('pin-image');
+              clone.querySelector('.pin-image').classList.remove('drop-image');
+            }
             clone.className = 'record-pin';
             this.organizer.append(clone);
           }
