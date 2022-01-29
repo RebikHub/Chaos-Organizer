@@ -67,6 +67,7 @@ button {
     overflow: auto;
     filter: drop-shadow(2px 3px 3px rgb(66, 66, 187));
     background-color: #252540;
+    overflow-y: auto;
 }
 
 .organizer-input {
