@@ -19,7 +19,8 @@
         position: relative;
         display: flex;
         width: 600px;
-        height: 800px;
+        height: 600px;
+        /* height: 800px; */
         margin: 20px auto auto auto;
         flex-direction: column;
     }
@@ -35,15 +36,17 @@
     color: aliceblue;
  }
 
- /* ::-webkit-scrollbar {
+ ::-webkit-scrollbar {
     width: 5px;
+    border-radius: 15px;
     background-color: #252540;
 }
 
  ::-webkit-scrollbar-thumb {
     width: 5px;
+    border-radius: 15px;
     background-color: #555555;
-} */
+}
 
 body {
     position: relative;
@@ -58,7 +61,6 @@ button {
 .organizer-records {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     border: 1px solid black;
     border-radius: 7px;
     height: inherit;
@@ -68,6 +70,11 @@ button {
     filter: drop-shadow(2px 3px 3px rgb(66, 66, 187));
     background-color: #252540;
     overflow-y: auto;
+}
+
+.for-scroll {
+    margin-top: auto;
+    width: 100%;
 }
 
 .organizer-input {

@@ -210,22 +210,34 @@ export default class Organizer {
     });
   }
 
+  scrollToBottom() {
+    this.organizerRecords.scrollTo({
+      top: this.organizerRecords.scrollHeight,
+      behavior: 'smooth',
+    });
+  }
+
   inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', (ev) => {
-      if (ev.key === 'Enter' && this.message !== null) {
+      if (ev.key === 'Enter' && this.message !== null && this.message !== '') {
         const record = Organizer.createRecord(this.message);
         this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
+        this.scrollToBottom();
       }
+    });
+    this.organizerInputText.addEventListener('blur', () => {
+      this.organizerInputText.value = '';
     });
   }
 
   inputTextClickBtnEnter() {
     this.enterBtn.addEventListener('click', () => {
-      if (this.message !== null && this.organizerInputText.value !== null) {
+      if (this.message !== null && this.organizerInputText.value !== null && this.message !== '') {
         const record = Organizer.createRecord(this.message);
         this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
+        this.scrollToBottom();
       }
     });
   }
