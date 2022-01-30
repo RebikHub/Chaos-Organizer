@@ -56,7 +56,10 @@ export default class DnD {
   static createSendFile(data) {
     const formData = new FormData();
     formData.append(data.name, data);
-    console.log(data.name, data);
+    // formData.set('date', new Date().getTime());
+    for (const key of formData.entries()) {
+      console.log(key);
+    }
     return formData;
   }
 
@@ -93,6 +96,7 @@ export default class DnD {
     dataFile.append(name);
     dataFile.append(size);
     this.orgRecords.append(Organizer.createRecord(dataFile));
+    Organizer.scrollToBottom(this.orgRecords);
   }
 
   inputAndConvert(file) {
@@ -120,5 +124,6 @@ export default class DnD {
     divImg.append(link);
     divImg.append(image);
     this.orgRecords.appendChild(Organizer.createRecord(divImg));
+    Organizer.scrollToBottom(this.orgRecords);
   }
 }

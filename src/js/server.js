@@ -5,19 +5,19 @@ export default class Server {
   }
 
   async saveMessages(data) {
-    const response = await fetch(`${this.url}/messages`, {
+    await fetch(`${this.url}/messages`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return response.json();
+    // return response.json();
   }
 
   async saveUploads(data) {
-    const response = await fetch(`${this.url}/uploads`, {
+    await fetch(`${this.url}/uploads`, {
       method: 'POST',
       body: data,
     });
-    const fd = await response.json();
+    // const fd = await response.json();
   }
 
   async loadMessages() {

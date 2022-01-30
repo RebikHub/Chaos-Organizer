@@ -210,9 +210,9 @@ export default class Organizer {
     });
   }
 
-  scrollToBottom() {
-    this.organizerRecords.scrollTo({
-      top: this.organizerRecords.scrollHeight,
+  static scrollToBottom(element) {
+    element.scrollTo({
+      top: element.scrollHeight,
       behavior: 'smooth',
     });
   }
@@ -223,7 +223,7 @@ export default class Organizer {
         const record = Organizer.createRecord(this.message);
         this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
-        this.scrollToBottom();
+        Organizer.scrollToBottom(this.organizerRecords);
       }
     });
     this.organizerInputText.addEventListener('blur', () => {
@@ -237,7 +237,7 @@ export default class Organizer {
         const record = Organizer.createRecord(this.message);
         this.addDataToOrgRecords(record);
         this.organizerInputText.value = null;
-        this.scrollToBottom();
+        Organizer.scrollToBottom(this.organizerRecords);
       }
     });
   }
