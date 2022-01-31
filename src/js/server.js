@@ -15,7 +15,7 @@ export default class Server {
   async saveUploads(data) {
     await fetch(`${this.url}/uploads`, {
       method: 'POST',
-      body: data,
+      body: JSON.stringify(data),
     });
     // const fd = await response.json();
   }
@@ -30,18 +30,20 @@ export default class Server {
     return images.json();
   }
 
-  async loadVideo() {
-    const video = await fetch(`${this.url}/video`);
-    return video.json();
-  }
-
-  async loadAudio() {
-    const audio = await fetch(`${this.url}/audio`);
-    return audio.json();
-  }
-
-  async loadLinks() {
-    const links = await fetch(`${this.url}/links`);
-    return links.json();
+  async downloadFile(name) {
+    const response = await fetch(`${this.url}/download`, {
+      method: 'POST',
+      body: name,
+    });
+    const res = await response.json();
+    if (res.length > 1) {
+      for (const i of res) {
+        console.log(`${this.url}/${i}`, i);
+      }
+    }
+    // const fileReader = new FileReader();
+    // fileReader.onload = (ev) => console.log(ev.target.result);
+    // fileReader.readAsDataURL(res);
+    // console.log(res);
   }
 }
