@@ -4,6 +4,13 @@ export default class Server {
     this.store = new Set();
   }
 
+  async testFs() {
+    await fetch(`${this.url}/test`, {
+      method: 'POST',
+      body: JSON.stringify('hi'),
+    });
+  }
+
   async saveMessages(data) {
     await fetch(`${this.url}/messages`, {
       method: 'POST',
@@ -14,7 +21,8 @@ export default class Server {
   async saveUploads(data) {
     await fetch(`${this.url}/uploads`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      // body: JSON.stringify(data),
+      body: data,
     });
   }
 

@@ -28,6 +28,7 @@ export default class Organizer {
   }
 
   events() {
+    document.querySelector('.organizer-input-geo').addEventListener('click', () => this.server.testFs());
     this.organizerInputText.focus();
     this.inputText();
     this.inputTextEnter();

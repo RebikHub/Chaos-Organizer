@@ -27,6 +27,7 @@ export default class DnD {
     this.dragLeave();
     this.dragEnd();
     this.inputFilesClick();
+    this.clickLoadFile();
   }
 
   dragEnter() {
@@ -61,18 +62,21 @@ export default class DnD {
   }
 
   static createSendFile(data) {
-    let typeFile = null;
-    if (data.includes('image')) {
-      typeFile = 'image';
-    }
-    if (data.includes('text')) {
-      typeFile = 'text';
-    }
-    return {
-      type: typeFile,
-      file: data,
-      date: new Date().getTime(),
-    };
+    // let typeFile = null;
+    // if (data.includes('image')) {
+    //   typeFile = 'image';
+    // }
+    // if (data.includes('text')) {
+    //   typeFile = 'text';
+    // }
+    // return {
+    //   type: typeFile,
+    //   file: data,
+    //   date: new Date().getTime(),
+    // };
+    const formData = new FormData();
+    formData.append('file', data);
+    return formData;
   }
 
   async renderInputFile(files) {
@@ -82,10 +86,11 @@ export default class DnD {
       } else {
         Organizer.readFile(i);
       }
-
-      const fileReader = new FileReader();
-      fileReader.onload = (ev) => this.server.saveUploads(DnD.createSendFile(ev.target.result));
-      fileReader.readAsDataURL(i);
+      console.log(i);
+      this.server.saveUploads(DnD.createSendFile(i));
+      // const fileReader = new FileReader();
+      // fileReader.onload = (ev) => this.server.saveUploads(DnD.createSendFile(ev.target.result));
+      // fileReader.readAsDataURL(i);
     }
   }
 
@@ -93,6 +98,7 @@ export default class DnD {
     this.organizer.addEventListener('click', (ev) => {
       ev.preventDefault();
       if (ev.target.classList.contains('link-download')) {
+        console.log(ev.target.dataset.name);
         this.server.downloadFile(ev.target.dataset.name);
       }
     });
