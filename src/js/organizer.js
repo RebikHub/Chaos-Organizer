@@ -36,6 +36,41 @@ export default class Organizer {
     this.clickAudioVideo(this.audioBtn);
     this.pinnedContent();
     this.closePinned();
+
+    this.initOrganizer();
+  }
+
+  async initOrganizer() {
+    const store = await this.server.loadStore();
+    store.sort((a, b) => {
+      if (a.date > b.date) {
+        return 1;
+      }
+      if (a.date < b.date) {
+        return -1;
+      }
+      return 0;
+    });
+
+    console.log(store);
+    for (const i of store) {
+      if (i.type === 'message') {
+        this.createDataMessage(i.file);
+      }
+      if (i.type === 'image') {
+        Organizer.createDataImage(i.file);
+      }
+      if (i.type === 'text') {
+        Organizer.readFile(i.file);
+      }
+    }
+  }
+
+  createDataMessage(content) {
+    const record = Organizer.createRecord(content);
+    this.addDataToOrgRecords(record);
+    this.organizerInputText.value = null;
+    Organizer.scrollToBottom(this.organizerRecords);
   }
 
   static createTextInputRecord(div, content) {
@@ -111,11 +146,76 @@ export default class Organizer {
     });
   }
 
+  static createDataFile(data, dataLink) {
+    const orgRec = document.querySelector('.organizer-records');
+
+    const dataFile = document.createElement('div');
+    const name = document.createElement('p');
+    const size = document.createElement('p');
+    const link = document.createElement('a');
+    link.classList.add('link-download');
+    dataFile.classList.add('drop-file');
+    name.classList.add('drop-file-name');
+    size.classList.add('drop-file-size');
+    name.textContent = data.name;
+    if (data.size >= 1048576) {
+      size.textContent = `Size: ${Number((data.size / 1048576).toFixed(2))} Mb`;
+    } else if (data.size < 1048576) {
+      size.textContent = `Size: ${Number((data.size / 1024).toFixed(2))} Kb`;
+    }
+    link.href = dataLink;
+    // link.dataset.name = `${data.name}`;
+    link.setAttribute('download', `${data.name}`);
+    dataFile.append(link);
+    dataFile.append(name);
+    dataFile.append(size);
+    orgRec.append(Organizer.createRecord(dataFile));
+    Organizer.scrollToBottom(orgRec);
+  }
+
+  static readFile(file) {
+    const fileReader = new FileReader();
+    fileReader.onload = (ev) => Organizer.createDataFile(file, ev.target.result);
+    fileReader.readAsDataURL(file);
+  }
+
+  static addImage(image, dataLink) {
+    const orgRec = document.querySelector('.organizer-records');
+
+    const divImg = document.createElement('div');
+    const name = document.createElement('p');
+    const link = document.createElement('a');
+    link.classList.add('link-download');
+    link.dataset.name = `${image.alt}`;
+    link.setAttribute('download', `${image.alt}`);
+    link.href = dataLink;
+    name.classList.add('drop-file-name');
+    divImg.classList.add('image');
+    divImg.append(link);
+    divImg.append(image);
+    orgRec.appendChild(Organizer.createRecord(divImg));
+    Organizer.scrollToBottom(orgRec);
+  }
+
+  static createDataImage(file) {
+    const url = URL.createObjectURL(file);
+    const image = document.createElement('img');
+    image.className = 'drop-image';
+    image.src = url;
+    image.alt = file.name;
+    image.onload = () => {
+      const fileReader = new FileReader();
+      fileReader.onload = (ev) => Organizer.addImage(image, ev.target.result);
+      fileReader.readAsDataURL(file);
+    };
+  }
+
   addDataToOrgRecords(record) {
     this.organizerRecords.appendChild(record);
     if (this.message !== null) {
       this.server.saveMessages({
-        message: this.message,
+        type: 'message',
+        file: this.message,
         date: new Date().getTime(),
       });
       this.message = null;
@@ -220,10 +320,7 @@ export default class Organizer {
   inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', (ev) => {
       if (ev.key === 'Enter' && this.message !== null && this.message !== '') {
-        const record = Organizer.createRecord(this.message);
-        this.addDataToOrgRecords(record);
-        this.organizerInputText.value = null;
-        Organizer.scrollToBottom(this.organizerRecords);
+        this.createDataMessage(this.message);
       }
     });
     this.organizerInputText.addEventListener('blur', () => {
@@ -234,10 +331,7 @@ export default class Organizer {
   inputTextClickBtnEnter() {
     this.enterBtn.addEventListener('click', () => {
       if (this.message !== null && this.organizerInputText.value !== null && this.message !== '') {
-        const record = Organizer.createRecord(this.message);
-        this.addDataToOrgRecords(record);
-        this.organizerInputText.value = null;
-        Organizer.scrollToBottom(this.organizerRecords);
+        this.createDataMessage(this.message);
       }
     });
   }

@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import Organizer from './organizer';
 
 export default class DnD {
@@ -28,7 +27,6 @@ export default class DnD {
     this.dragLeave();
     this.dragEnd();
     this.inputFilesClick();
-    this.clickLoadFile();
   }
 
   dragEnter() {
@@ -63,89 +61,37 @@ export default class DnD {
   }
 
   static createSendFile(data) {
+    let typeFile = null;
+    if (data.includes('image')) {
+      typeFile = 'image';
+    }
+    if (data.includes('text')) {
+      typeFile = 'text';
+    }
     return {
+      type: typeFile,
       file: data,
       date: new Date().getTime(),
     };
   }
 
-  renderInputFile(files) {
+  async renderInputFile(files) {
     for (const i of files) {
       if (i.type.includes('image')) {
-        this.createDataImage(i);
+        Organizer.createDataImage(i);
       } else {
-        this.readFile(i);
+        Organizer.readFile(i);
       }
-      console.log(i);
+
       const fileReader = new FileReader();
       fileReader.onload = (ev) => this.server.saveUploads(DnD.createSendFile(ev.target.result));
       fileReader.readAsDataURL(i);
-      // this.server.saveUploads(DnD.createSendFile(i));
     }
-  }
-
-  createDataFile(data, dataLink) {
-    const dataFile = document.createElement('div');
-    const name = document.createElement('p');
-    const size = document.createElement('p');
-    const link = document.createElement('a');
-    link.classList.add('link-download');
-    dataFile.classList.add('drop-file');
-    name.classList.add('drop-file-name');
-    size.classList.add('drop-file-size');
-    name.textContent = data.name;
-    if (data.size >= 1048576) {
-      size.textContent = `Size: ${Number((data.size / 1048576).toFixed(2))} Mb`;
-    } else if (data.size < 1048576) {
-      size.textContent = `Size: ${Number((data.size / 1024).toFixed(2))} Kb`;
-    }
-    link.href = dataLink;
-    link.dataset.name = `${data.name}`;
-    link.setAttribute('download', `${data.name}`);
-    dataFile.append(link);
-    dataFile.append(name);
-    dataFile.append(size);
-    this.orgRecords.append(Organizer.createRecord(dataFile));
-    Organizer.scrollToBottom(this.orgRecords);
-  }
-
-  readFile(file) {
-    const fileReader = new FileReader();
-    fileReader.onload = (ev) => this.createDataFile(file, ev.target.result);
-    fileReader.readAsDataURL(file);
-  }
-
-  addImage(image, dataLink) {
-    const divImg = document.createElement('div');
-    const name = document.createElement('p');
-    const link = document.createElement('a');
-    link.classList.add('link-download');
-    link.dataset.name = `${image.alt}`;
-    link.setAttribute('download', `${image.alt}`);
-    link.href = dataLink;
-    name.classList.add('drop-file-name');
-    divImg.classList.add('image');
-    divImg.append(link);
-    divImg.append(image);
-    this.orgRecords.appendChild(Organizer.createRecord(divImg));
-    Organizer.scrollToBottom(this.orgRecords);
-  }
-
-  createDataImage(file) {
-    const url = URL.createObjectURL(file);
-    const image = document.createElement('img');
-    image.className = 'drop-image';
-    image.src = url;
-    image.alt = file.name;
-    image.onload = () => {
-      const fileReader = new FileReader();
-      fileReader.onload = (ev) => this.addImage(image, ev.target.result);
-      fileReader.readAsDataURL(file);
-    };
   }
 
   clickLoadFile() {
     this.organizer.addEventListener('click', (ev) => {
+      ev.preventDefault();
       if (ev.target.classList.contains('link-download')) {
         this.server.downloadFile(ev.target.dataset.name);
       }

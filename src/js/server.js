@@ -9,7 +9,6 @@ export default class Server {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    // return response.json();
   }
 
   async saveUploads(data) {
@@ -17,7 +16,11 @@ export default class Server {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    // const fd = await response.json();
+  }
+
+  async loadStore() {
+    const store = await fetch(`${this.url}/store`);
+    return store.json();
   }
 
   async loadMessages() {
@@ -36,14 +39,10 @@ export default class Server {
       body: name,
     });
     const res = await response.json();
-    if (res.length > 1) {
-      for (const i of res) {
-        console.log(`${this.url}/${i}`, i);
-      }
-    }
-    // const fileReader = new FileReader();
-    // fileReader.onload = (ev) => console.log(ev.target.result);
-    // fileReader.readAsDataURL(res);
-    // console.log(res);
+
+    const fileReader = new FileReader();
+    fileReader.onload = (ev) => console.log(ev.target.result);
+    fileReader.readAsDataURL(res);
+    console.log(res);
   }
 }
