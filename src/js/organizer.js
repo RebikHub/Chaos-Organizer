@@ -29,7 +29,6 @@ export default class Organizer {
   }
 
   events() {
-    document.querySelector('.organizer-input-geo').addEventListener('click', () => this.server.testFs());
     this.organizerInputText.focus();
     this.inputText();
     this.inputTextEnter();
@@ -40,6 +39,18 @@ export default class Organizer {
     this.closePinned();
 
     this.initOrganizer();
+    this.deleteRecord();
+  }
+
+  deleteRecord() {
+    this.organizer.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      if (ev.target.classList.contains('record-delete')) {
+        console.log(ev.target.parentElement.dataset.id);
+        ev.target.parentElement.parentElement.remove();
+        this.server.deleteFile(ev.target.parentElement.dataset.id);
+      }
+    });
   }
 
   async initOrganizer() {
@@ -54,6 +65,7 @@ export default class Organizer {
       return 0;
     });
 
+    console.log(store);
     for (const i of store) {
       const url = await this.server.downloadFile(i.idName);
       if (i.type === 'message') {
@@ -94,17 +106,21 @@ export default class Organizer {
     }
   }
 
-  static createRecord(content) {
+  static createRecord(content, dataName) {
     const record = document.createElement('div');
     const recTitle = document.createElement('div');
     const date = document.createElement('div');
     const attach = document.createElement('div');
+    const recDel = document.createElement('div');
+    recDel.classList.add('record-delete');
     recTitle.classList.add('record-title');
     attach.classList.add('record-attach');
     record.classList.add('record');
     date.classList.add('record-date');
     date.textContent = Organizer.getDate();
+    recTitle.dataset.id = `${dataName}`;
     recTitle.append(attach);
+    recTitle.append(recDel);
     recTitle.append(date);
     record.append(recTitle);
 
@@ -164,12 +180,12 @@ export default class Organizer {
       size.textContent = `Size: ${Number((data.size / 1024).toFixed(2))} Kb`;
     }
     link.href = dataLink;
-    link.dataset.name = `${dataName}`;
+    // link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${data.name}`);
     dataFile.append(link);
     dataFile.append(name);
     dataFile.append(size);
-    orgRec.append(Organizer.createRecord(dataFile));
+    orgRec.append(Organizer.createRecord(dataFile, dataName));
     Organizer.scrollToBottom(orgRec);
   }
 
@@ -180,14 +196,14 @@ export default class Organizer {
     const name = document.createElement('p');
     const link = document.createElement('a');
     link.classList.add('link-download');
-    link.dataset.name = `${dataName}`;
+    // link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${image.alt}`);
     link.href = dataLink;
     name.classList.add('drop-file-name');
     divImg.classList.add('image');
     divImg.append(link);
     divImg.append(image);
-    orgRec.appendChild(Organizer.createRecord(divImg));
+    orgRec.appendChild(Organizer.createRecord(divImg, dataName));
     Organizer.scrollToBottom(orgRec);
   }
 

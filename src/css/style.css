@@ -280,6 +280,20 @@ button {
     justify-content: space-between;
 }
 
+.record-delete {
+    background-image: url(../image/del.png);
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    background-color: initial;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.record-delete:hover {
+    cursor: pointer;
+}
+
 .record-date {
     margin-left: auto;
 }
@@ -289,7 +303,7 @@ button {
 }
 
 .record-attach {
-    background-image: url(../image/pin2.png);
+    background-image: url(../image/pin12.png);
     width: 20px;
     height: 20px;
     margin-right: 10px;

@@ -14,7 +14,6 @@ export default class Server {
   async saveUploads(data) {
     const response = await fetch(`${this.url}/uploads`, {
       method: 'POST',
-      // body: JSON.stringify(data),
       body: data,
     });
     return response.text();
@@ -23,6 +22,10 @@ export default class Server {
   async loadStore() {
     const store = await fetch(`${this.url}/store`);
     return store.json();
+  }
+
+  async deleteFile(id) {
+    await fetch(`${this.url}/delete/?${id}`);
   }
 
   async loadMessages() {

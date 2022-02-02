@@ -71,12 +71,13 @@ export default class DnD {
   async renderInputFile(files) {
     for (const i of files) {
       const name = await this.server.saveUploads(DnD.createSendFile(i));
+      const url = await this.server.downloadFile(name);
 
       if (i.type.includes('image')) {
-        const url = await this.server.downloadFile(name);
+        // const url = await this.server.downloadFile(name);
         Organizer.createDataImage(i, url, name);
       } else {
-        const url = await this.server.downloadFile(name);
+        // const url = await this.server.downloadFile(name);
         Organizer.createDataFile(i, url, name);
       }
     }
