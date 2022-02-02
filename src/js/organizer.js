@@ -47,8 +47,8 @@ export default class Organizer {
       ev.preventDefault();
       if (ev.target.classList.contains('record-delete')) {
         console.log(ev.target.parentElement.dataset.id);
-        ev.target.parentElement.parentElement.remove();
         this.server.deleteFile(ev.target.parentElement.dataset.id);
+        ev.target.parentElement.parentElement.remove();
       }
     });
   }
@@ -79,8 +79,17 @@ export default class Organizer {
   }
 
   createDataMessage(content) {
-    const record = Organizer.createRecord(content);
-    this.addDataToOrgRecords(record);
+    const dateId = new Date().getTime();
+    const record = Organizer.createRecord(content, dateId);
+    this.organizerRecords.appendChild(record);
+    if (this.message !== null) {
+      this.server.saveMessages({
+        type: 'message',
+        file: this.message,
+        date: dateId,
+        idName: dateId,
+      });
+    }
     this.organizerInputText.value = null;
     Organizer.scrollToBottom(this.organizerRecords);
   }
@@ -222,6 +231,7 @@ export default class Organizer {
         type: 'message',
         file: this.message,
         date: new Date().getTime(),
+        idName: new Date().getTime(),
       });
       this.message = null;
       this.createElement = null;
