@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import Organizer from './organizer';
 
 export default class DnD {
@@ -27,7 +28,7 @@ export default class DnD {
     this.dragLeave();
     this.dragEnd();
     this.inputFilesClick();
-    this.clickLoadFile();
+    // this.clickLoadFile();
   }
 
   dragEnter() {
@@ -62,18 +63,6 @@ export default class DnD {
   }
 
   static createSendFile(data) {
-    // let typeFile = null;
-    // if (data.includes('image')) {
-    //   typeFile = 'image';
-    // }
-    // if (data.includes('text')) {
-    //   typeFile = 'text';
-    // }
-    // return {
-    //   type: typeFile,
-    //   file: data,
-    //   date: new Date().getTime(),
-    // };
     const formData = new FormData();
     formData.append('file', data);
     return formData;
@@ -81,16 +70,15 @@ export default class DnD {
 
   async renderInputFile(files) {
     for (const i of files) {
+      const name = await this.server.saveUploads(DnD.createSendFile(i));
+
       if (i.type.includes('image')) {
-        Organizer.createDataImage(i);
+        const url = await this.server.downloadFile(name);
+        Organizer.createDataImage(i, url, name);
       } else {
-        Organizer.readFile(i);
+        const url = await this.server.downloadFile(name);
+        Organizer.createDataFile(i, url, name);
       }
-      console.log(i);
-      this.server.saveUploads(DnD.createSendFile(i));
-      // const fileReader = new FileReader();
-      // fileReader.onload = (ev) => this.server.saveUploads(DnD.createSendFile(ev.target.result));
-      // fileReader.readAsDataURL(i);
     }
   }
 

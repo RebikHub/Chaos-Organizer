@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import Record from './record';
 import notificationBox from './notification';
 
@@ -53,16 +54,14 @@ export default class Organizer {
       return 0;
     });
 
-    console.log(store);
     for (const i of store) {
+      const url = await this.server.downloadFile(i.idName);
       if (i.type === 'message') {
         this.createDataMessage(i.file);
-      }
-      if (i.type === 'image') {
-        Organizer.createDataImage(i.file);
-      }
-      if (i.type === 'text') {
-        Organizer.readFile(i.file);
+      } else if (i.type === 'image') {
+        Organizer.createDataImage(i, url, i.idName);
+      } else {
+        Organizer.createDataFile(i, url, i.idName);
       }
     }
   }
@@ -147,7 +146,7 @@ export default class Organizer {
     });
   }
 
-  static createDataFile(data, dataLink) {
+  static createDataFile(data, dataLink, dataName) {
     const orgRec = document.querySelector('.organizer-records');
 
     const dataFile = document.createElement('div');
@@ -165,7 +164,7 @@ export default class Organizer {
       size.textContent = `Size: ${Number((data.size / 1024).toFixed(2))} Kb`;
     }
     link.href = dataLink;
-    // link.dataset.name = `${data.name}`;
+    link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${data.name}`);
     dataFile.append(link);
     dataFile.append(name);
@@ -174,20 +173,14 @@ export default class Organizer {
     Organizer.scrollToBottom(orgRec);
   }
 
-  static readFile(file) {
-    const fileReader = new FileReader();
-    fileReader.onload = (ev) => Organizer.createDataFile(file, ev.target.result);
-    fileReader.readAsDataURL(file);
-  }
-
-  static addImage(image, dataLink) {
+  static addImage(image, dataLink, dataName) {
     const orgRec = document.querySelector('.organizer-records');
 
     const divImg = document.createElement('div');
     const name = document.createElement('p');
     const link = document.createElement('a');
     link.classList.add('link-download');
-    link.dataset.name = `${image.alt}`;
+    link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${image.alt}`);
     link.href = dataLink;
     name.classList.add('drop-file-name');
@@ -198,17 +191,12 @@ export default class Organizer {
     Organizer.scrollToBottom(orgRec);
   }
 
-  static createDataImage(file) {
-    const url = URL.createObjectURL(file);
+  static createDataImage(data, dataLink, dataName) {
     const image = document.createElement('img');
     image.className = 'drop-image';
-    image.src = url;
-    image.alt = file.name;
-    image.onload = () => {
-      const fileReader = new FileReader();
-      fileReader.onload = (ev) => Organizer.addImage(image, ev.target.result);
-      fileReader.readAsDataURL(file);
-    };
+    image.src = dataLink;
+    image.alt = data.name;
+    image.onload = () => Organizer.addImage(image, dataLink, dataName);
   }
 
   addDataToOrgRecords(record) {
