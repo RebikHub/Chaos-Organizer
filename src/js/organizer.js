@@ -44,7 +44,6 @@ export default class Organizer {
 
   deleteRecord() {
     this.organizer.addEventListener('click', (ev) => {
-      ev.preventDefault();
       if (ev.target.classList.contains('record-delete')) {
         console.log(ev.target.parentElement.dataset.id);
         this.server.deleteFile(ev.target.parentElement.dataset.id);
@@ -69,7 +68,7 @@ export default class Organizer {
     for (const i of store) {
       const url = await this.server.downloadFile(i.idName);
       if (i.type === 'message') {
-        this.createDataMessage(i.file);
+        this.createDataMessage(i.file, i.idName);
       } else if (i.type === 'image') {
         Organizer.createDataImage(i, url, i.idName);
       } else {
@@ -78,18 +77,9 @@ export default class Organizer {
     }
   }
 
-  createDataMessage(content) {
-    const dateId = new Date().getTime();
-    const record = Organizer.createRecord(content, dateId);
+  async createDataMessage(content, id) {
+    const record = Organizer.createRecord(content, id);
     this.organizerRecords.appendChild(record);
-    if (this.message !== null) {
-      this.server.saveMessages({
-        type: 'message',
-        file: this.message,
-        date: dateId,
-        idName: dateId,
-      });
-    }
     this.organizerInputText.value = null;
     Organizer.scrollToBottom(this.organizerRecords);
   }
@@ -332,10 +322,21 @@ export default class Organizer {
     });
   }
 
+  async createIdMessage(message) {
+    let id = null;
+    id = await this.server.saveMessages({
+      type: 'message',
+      file: message,
+      date: new Date().getTime(),
+    });
+    return id;
+  }
+
   inputTextEnter() {
-    this.organizerInputText.addEventListener('keyup', (ev) => {
+    this.organizerInputText.addEventListener('keyup', async (ev) => {
       if (ev.key === 'Enter' && this.message !== null && this.message !== '') {
-        this.createDataMessage(this.message);
+        const id = await this.createIdMessage(this.message);
+        this.createDataMessage(this.message, id);
       }
     });
     this.organizerInputText.addEventListener('blur', () => {
@@ -344,9 +345,10 @@ export default class Organizer {
   }
 
   inputTextClickBtnEnter() {
-    this.enterBtn.addEventListener('click', () => {
+    this.enterBtn.addEventListener('click', async () => {
       if (this.message !== null && this.organizerInputText.value !== null && this.message !== '') {
-        this.createDataMessage(this.message);
+        const id = await this.createIdMessage(this.message);
+        this.createDataMessage(this.message, id);
       }
     });
   }

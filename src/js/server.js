@@ -5,10 +5,11 @@ export default class Server {
   }
 
   async saveMessages(data) {
-    await fetch(`${this.url}/messages`, {
+    const response = await fetch(`${this.url}/messages`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    return response.text();
   }
 
   async saveUploads(data) {
@@ -25,6 +26,7 @@ export default class Server {
   }
 
   async deleteFile(id) {
+    console.log(id);
     await fetch(`${this.url}/delete/?${id}`);
   }
 
