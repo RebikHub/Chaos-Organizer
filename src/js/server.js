@@ -20,8 +20,11 @@ export default class Server {
     return response.text();
   }
 
-  async loadStore() {
-    const store = await fetch(`${this.url}/store`);
+  async loadStore(length) {
+    const store = await fetch(`${this.url}/store/?${length}`);
+    if (store.status === 204) {
+      return console.log('no data');
+    }
     return store.json();
   }
 

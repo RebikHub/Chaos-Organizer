@@ -8,6 +8,7 @@ export default class Organizer {
     this.organizer = document.getElementById('organizer');
     this.organizerRecords = document.querySelector('.organizer-records');
     this.organizerInputText = document.querySelector('.organizer-input-text');
+    this.store = null;
 
     this.message = null;
     this.modal = document.querySelector('.modal');
@@ -28,7 +29,7 @@ export default class Organizer {
     this.sec = 0;
   }
 
-  events() {
+  async events() {
     this.organizerInputText.focus();
     this.inputText();
     this.inputTextEnter();
@@ -38,14 +39,14 @@ export default class Organizer {
     this.pinnedContent();
     this.closePinned();
 
-    this.initOrganizer();
+    await this.initOrganizer();
+    this.onScroll();
     this.deleteRecord();
   }
 
   deleteRecord() {
     this.organizer.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('record-delete')) {
-        console.log(ev.target.parentElement.dataset.id);
         this.server.deleteFile(ev.target.parentElement.dataset.id);
         ev.target.parentElement.parentElement.remove();
       }
@@ -53,32 +54,46 @@ export default class Organizer {
   }
 
   async initOrganizer() {
-    const store = await this.server.loadStore();
-    store.sort((a, b) => {
-      if (a.date > b.date) {
-        return 1;
+    const arrRecords = document.querySelectorAll('.record');
+    try {
+      const store = await this.server.loadStore(arrRecords.length);
+      this.store = Array.from(store);
+  
+      for (const i of store) {
+        const url = await this.server.downloadFile(i.idName);
+        if (i.type === 'message') {
+          this.createDataMessage(i.file, i.idName, i.date);
+        } else if (i.type === 'image') {
+          Organizer.createDataImage(i, url, i.idName, i.date);
+        } else {
+          Organizer.createDataFile(i, url, i.idName, i.date);
+        }
       }
-      if (a.date < b.date) {
-        return -1;
-      }
-      return 0;
-    });
-
-    console.log(store);
-    for (const i of store) {
-      const url = await this.server.downloadFile(i.idName);
-      if (i.type === 'message') {
-        this.createDataMessage(i.file, i.idName);
-      } else if (i.type === 'image') {
-        Organizer.createDataImage(i, url, i.idName);
-      } else {
-        Organizer.createDataFile(i, url, i.idName);
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  async createDataMessage(content, id) {
-    const record = Organizer.createRecord(content, id);
+  static scrollToBottom(element) {
+    element.scrollTo({
+      top: element.scrollHeight,
+      behavior: 'smooth',
+    });
+  }
+
+  onScroll() {
+    this.organizerRecords.onscroll = async () => {
+      const arrRecords = document.querySelectorAll('.record');
+      const lastEl = arrRecords[0].getBoundingClientRect().y;
+
+      if (lastEl === 25) {
+        await this.initOrganizer();
+      }
+    };
+  }
+
+  async createDataMessage(content, id, date) {
+    const record = Organizer.createRecord(content, id, date);
     this.organizerRecords.appendChild(record);
     this.organizerInputText.value = null;
     Organizer.scrollToBottom(this.organizerRecords);
@@ -105,7 +120,7 @@ export default class Organizer {
     }
   }
 
-  static createRecord(content, dataName) {
+  static createRecord(content, dataName, dataDate = null) {
     const record = document.createElement('div');
     const recTitle = document.createElement('div');
     const date = document.createElement('div');
@@ -116,7 +131,13 @@ export default class Organizer {
     attach.classList.add('record-attach');
     record.classList.add('record');
     date.classList.add('record-date');
-    date.textContent = Organizer.getDate();
+
+    if (dataDate !== null) {
+      date.textContent = Organizer.getDate(dataDate);
+    } else {
+      date.textContent = Organizer.getDate();
+    }
+
     recTitle.dataset.id = `${dataName}`;
     recTitle.append(attach);
     recTitle.append(recDel);
@@ -161,7 +182,7 @@ export default class Organizer {
     });
   }
 
-  static createDataFile(data, dataLink, dataName) {
+  static createDataFile(data, dataLink, dataName, dataDate) {
     const orgRec = document.querySelector('.organizer-records');
 
     const dataFile = document.createElement('div');
@@ -179,39 +200,37 @@ export default class Organizer {
       size.textContent = `Size: ${Number((data.size / 1024).toFixed(2))} Kb`;
     }
     link.href = dataLink;
-    // link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${data.name}`);
     dataFile.append(link);
     dataFile.append(name);
     dataFile.append(size);
-    orgRec.append(Organizer.createRecord(dataFile, dataName));
+    orgRec.append(Organizer.createRecord(dataFile, dataName, dataDate));
     Organizer.scrollToBottom(orgRec);
   }
 
-  static addImage(image, dataLink, dataName) {
+  static addImage(image, dataLink, dataName, dataDate) {
     const orgRec = document.querySelector('.organizer-records');
 
     const divImg = document.createElement('div');
     const name = document.createElement('p');
     const link = document.createElement('a');
     link.classList.add('link-download');
-    // link.dataset.name = `${dataName}`;
     link.setAttribute('download', `${image.alt}`);
     link.href = dataLink;
     name.classList.add('drop-file-name');
     divImg.classList.add('image');
     divImg.append(link);
     divImg.append(image);
-    orgRec.appendChild(Organizer.createRecord(divImg, dataName));
+    orgRec.appendChild(Organizer.createRecord(divImg, dataName, dataDate));
     Organizer.scrollToBottom(orgRec);
   }
 
-  static createDataImage(data, dataLink, dataName) {
+  static createDataImage(data, dataLink, dataName, dataDate) {
     const image = document.createElement('img');
     image.className = 'drop-image';
     image.src = dataLink;
     image.alt = data.name;
-    image.onload = () => Organizer.addImage(image, dataLink, dataName);
+    image.onload = () => Organizer.addImage(image, dataLink, dataName, dataDate);
   }
 
   addDataToOrgRecords(record) {
@@ -252,7 +271,6 @@ export default class Organizer {
   }
 
   async transformButtonsOn() {
-    // тут был запрос на геопозицию
     this.timer.classList.remove('none');
     this.timerRec();
     this.videoBtn.classList.remove('organizer-input-video');
@@ -301,8 +319,8 @@ export default class Organizer {
         this.record('video');
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-ok')) {
         this.cancelRecord();
-        const record = Organizer.createRecord(this.createElement);
-        this.addDataToOrgRecords(record);
+        // const record = Organizer.createRecord(this.createElement);
+        // this.addDataToOrgRecords(record);
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-cancel')) {
         this.cancelRecord();
       }
@@ -312,13 +330,6 @@ export default class Organizer {
   inputText() {
     this.organizerInputText.addEventListener('input', (ev) => {
       this.message = ev.target.value.replace(/\n/g, '');
-    });
-  }
-
-  static scrollToBottom(element) {
-    element.scrollTo({
-      top: element.scrollHeight,
-      behavior: 'smooth',
     });
   }
 
@@ -353,12 +364,20 @@ export default class Organizer {
     });
   }
 
-  static getDate() {
-    const year = new Date().getFullYear();
+  static getDate(date) {
+    let year = new Date().getFullYear();
     let month = new Date().getMonth() + 1;
     let day = new Date().getDate();
     let hours = new Date().getHours();
     let minute = new Date().getMinutes();
+
+    if (date) {
+      year = new Date(date).getFullYear();
+      month = new Date(date).getMonth() + 1;
+      day = new Date(date).getDate();
+      hours = new Date(date).getHours();
+      minute = new Date(date).getMinutes();
+    }
 
     if (String(month).length === 1) {
       month = `0${month}`;

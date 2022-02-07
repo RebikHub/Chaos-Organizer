@@ -28,7 +28,6 @@ export default class DnD {
     this.dragLeave();
     this.dragEnd();
     this.inputFilesClick();
-    // this.clickLoadFile();
   }
 
   dragEnter() {
@@ -74,22 +73,10 @@ export default class DnD {
       const url = await this.server.downloadFile(name);
 
       if (i.type.includes('image')) {
-        // const url = await this.server.downloadFile(name);
         Organizer.createDataImage(i, url, name);
       } else {
-        // const url = await this.server.downloadFile(name);
         Organizer.createDataFile(i, url, name);
       }
     }
-  }
-
-  clickLoadFile() {
-    this.organizer.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      if (ev.target.classList.contains('link-download')) {
-        console.log(ev.target.dataset.name);
-        this.server.downloadFile(ev.target.dataset.name);
-      }
-    });
   }
 }
