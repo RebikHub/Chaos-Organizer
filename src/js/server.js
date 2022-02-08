@@ -51,6 +51,7 @@ export default class Server {
       },
     });
     const res = await response.blob();
+    // console.log(res);
     const url = URL.createObjectURL(res);
     return url;
   }

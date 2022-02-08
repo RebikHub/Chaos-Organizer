@@ -41,13 +41,17 @@ export default class Organizer {
     const arrRecords = document.querySelectorAll('.record');
     try {
       const store = await this.server.loadStore(arrRecords.length);
+      console.log(store);
       if (store) {
         for (const i of store) {
           const url = await this.server.downloadFile(i.idName);
+          console.log(i.type);
           if (i.type === 'message') {
             this.createDataMessage(i.file, i.idName, i.date, false);
           } else if (i.type === 'image') {
-            Organizer.createDataImage(i, url, i.idName, i.date, false);
+            Organizer.createDataContent(i, url, i.idName, i.date, false);
+          } else if (i.type === 'audio' || i.type === 'video') {
+            Organizer.createDataContent(i, url, i.idName, i.date, false);
           } else {
             Organizer.createDataFile(i, url, i.idName, i.date, false);
           }
@@ -78,7 +82,7 @@ export default class Organizer {
   }
 
   async createDataMessage(content, id, date, newdata = true) {
-    const record = Organizer.createRecord(content, id, date);
+    const record = Organizer.createRecord(content, id, date, newdata);
 
     if (newdata) {
       this.organizerRecords.append(record);
@@ -112,7 +116,7 @@ export default class Organizer {
     }
   }
 
-  static createRecord(content, dataName, dataDate = null) {
+  static createRecord(content, dataName, dataDate) {
     const record = document.createElement('div');
     const recTitle = document.createElement('div');
     const date = document.createElement('div');
@@ -207,19 +211,16 @@ export default class Organizer {
     }
   }
 
-  static addImage(image, dataLink, dataName, dataDate, newdata) {
+  static addContent(data, dataLink, dataName, dataDate, newdata) {
     const orgRec = document.querySelector('.organizer-records');
-
     const divImg = document.createElement('div');
-    const name = document.createElement('p');
     const link = document.createElement('a');
     link.classList.add('link-download');
-    link.setAttribute('download', `${image.alt}`);
+    link.setAttribute('download', `${data.alt}`);
     link.href = dataLink;
-    name.classList.add('drop-file-name');
     divImg.classList.add('image');
     divImg.append(link);
-    divImg.append(image);
+    divImg.append(data);
 
     if (newdata) {
       orgRec.appendChild(Organizer.createRecord(divImg, dataName, dataDate));
@@ -231,12 +232,28 @@ export default class Organizer {
     }
   }
 
-  static createDataImage(data, dataLink, dataName, dataDate, newdata = true) {
-    const image = document.createElement('img');
-    image.className = 'drop-image';
-    image.src = dataLink;
-    image.alt = data.name;
-    image.onload = () => Organizer.addImage(image, dataLink, dataName, dataDate, newdata);
+  static createDataContent(data, dataLink, dataName, dataDate, newdata = true) {
+    let type = null;
+    if (data.type.includes('image')) {
+      type = 'img';
+    } else if (data.type.includes('audio')) {
+      type = 'audio';
+    } else if (data.type.includes('video')) {
+      type = 'video';
+    }
+    console.log(data.type.includes('audio'));
+    const content = document.createElement(type);
+    if (data.type.includes('audio') || data.type.includes('video')) {
+      content.controls = true;
+    }
+    content.className = 'drop-image';
+    content.src = dataLink;
+    content.alt = data.name;
+    if (data.type === 'image') {
+      content.onload = () => Organizer.addContent(content, dataLink, dataName, dataDate, newdata);
+    } else {
+      Organizer.addContent(content, dataLink, dataName, dataDate, newdata);
+    }
   }
 
   inputText() {

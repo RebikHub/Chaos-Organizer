@@ -73,7 +73,7 @@ export default class DnD {
       const url = await this.server.downloadFile(name);
 
       if (i.type.includes('image')) {
-        Organizer.createDataImage(i, url, name);
+        Organizer.createDataContent(i, url, name);
       } else {
         Organizer.createDataFile(i, url, name);
       }
