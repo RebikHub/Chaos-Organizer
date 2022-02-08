@@ -8,7 +8,7 @@ export default class Organizer {
     this.organizer = document.getElementById('organizer');
     this.organizerRecords = document.querySelector('.organizer-records');
     this.organizerInputText = document.querySelector('.organizer-input-text');
-    this.store = null;
+
 
     this.message = null;
     this.modal = document.querySelector('.modal');
@@ -57,17 +57,18 @@ export default class Organizer {
     const arrRecords = document.querySelectorAll('.record');
     try {
       const store = await this.server.loadStore(arrRecords.length);
-      this.store = Array.from(store);
-  
-      for (const i of store) {
-        const url = await this.server.downloadFile(i.idName);
-        if (i.type === 'message') {
-          this.createDataMessage(i.file, i.idName, i.date);
-        } else if (i.type === 'image') {
-          Organizer.createDataImage(i, url, i.idName, i.date);
-        } else {
-          Organizer.createDataFile(i, url, i.idName, i.date);
+      if (store) {
+        for (const i of store) {
+          const url = await this.server.downloadFile(i.idName);
+          if (i.type === 'message') {
+            this.createDataMessage(i.file, i.idName, i.date, false);
+          } else if (i.type === 'image') {
+            Organizer.createDataImage(i, url, i.idName, i.date, false);
+          } else {
+            Organizer.createDataFile(i, url, i.idName, i.date, false);
+          }
         }
+        Organizer.scrollToBottom(this.organizerRecords);
       }
     } catch (error) {
       console.log(error);
@@ -92,11 +93,18 @@ export default class Organizer {
     };
   }
 
-  async createDataMessage(content, id, date) {
+  async createDataMessage(content, id, date, newdata = true) {
     const record = Organizer.createRecord(content, id, date);
-    this.organizerRecords.appendChild(record);
+
+    if (newdata) {
+      this.organizerRecords.append(record);
+      Organizer.scrollToBottom(this.organizerRecords);
+    } else {
+      const beforeElement = document.querySelectorAll('.record');
+      this.organizerRecords.insertBefore(record, beforeElement[0]);
+    }
+
     this.organizerInputText.value = null;
-    Organizer.scrollToBottom(this.organizerRecords);
   }
 
   static createTextInputRecord(div, content) {
@@ -182,7 +190,7 @@ export default class Organizer {
     });
   }
 
-  static createDataFile(data, dataLink, dataName, dataDate) {
+  static createDataFile(data, dataLink, dataName, dataDate, newdata = true) {
     const orgRec = document.querySelector('.organizer-records');
 
     const dataFile = document.createElement('div');
@@ -204,11 +212,18 @@ export default class Organizer {
     dataFile.append(link);
     dataFile.append(name);
     dataFile.append(size);
-    orgRec.append(Organizer.createRecord(dataFile, dataName, dataDate));
-    Organizer.scrollToBottom(orgRec);
+
+    if (newdata) {
+      orgRec.append(Organizer.createRecord(dataFile, dataName, dataDate));
+      Organizer.scrollToBottom(orgRec);
+    } else {
+      const insertElement = Organizer.createRecord(dataFile, dataName, dataDate);
+      const beforeElement = document.querySelectorAll('.record');
+      orgRec.insertBefore(insertElement, beforeElement[0]);
+    }
   }
 
-  static addImage(image, dataLink, dataName, dataDate) {
+  static addImage(image, dataLink, dataName, dataDate, newdata) {
     const orgRec = document.querySelector('.organizer-records');
 
     const divImg = document.createElement('div');
@@ -221,16 +236,23 @@ export default class Organizer {
     divImg.classList.add('image');
     divImg.append(link);
     divImg.append(image);
-    orgRec.appendChild(Organizer.createRecord(divImg, dataName, dataDate));
-    Organizer.scrollToBottom(orgRec);
+
+    if (newdata) {
+      orgRec.appendChild(Organizer.createRecord(divImg, dataName, dataDate));
+      Organizer.scrollToBottom(orgRec);
+    } else {
+      const insertElement = Organizer.createRecord(divImg, dataName, dataDate);
+      const beforeElement = document.querySelectorAll('.record');
+      orgRec.insertBefore(insertElement, beforeElement[0]);
+    }
   }
 
-  static createDataImage(data, dataLink, dataName, dataDate) {
+  static createDataImage(data, dataLink, dataName, dataDate, newdata = true) {
     const image = document.createElement('img');
     image.className = 'drop-image';
     image.src = dataLink;
     image.alt = data.name;
-    image.onload = () => Organizer.addImage(image, dataLink, dataName, dataDate);
+    image.onload = () => Organizer.addImage(image, dataLink, dataName, dataDate, newdata);
   }
 
   addDataToOrgRecords(record) {
