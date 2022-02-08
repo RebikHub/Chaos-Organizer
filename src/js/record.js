@@ -1,18 +1,36 @@
+/* eslint-disable no-param-reassign */
+import Organizer from './organizer';
+import notificationBox from './notification';
+
 export default class Record {
-  constructor(element, type) {
+  constructor(server) {
+    this.server = server;
     this.chunks = [];
     this.recorder = null;
-    this.element = element;
-    this.type = type;
+
+    this.type = null;
     this.error = null;
+    this.audioBtn = document.querySelector('.organizer-input-audio');
+    this.videoBtn = document.querySelector('.organizer-input-video');
+    this.timer = document.querySelector('.timer');
+    this.recorder = null;
+    this.createElement = null;
+    this.timerId = null;
+    this.min = 0;
+    this.sec = 0;
   }
 
-  async createRecord() {
+  events() {
+    this.clickAudioVideo(this.videoBtn);
+    this.clickAudioVideo(this.audioBtn);
+  }
+
+  async createRecord(element, type) {
     try {
       let stream;
-      if (this.type === 'audio') {
+      if (type === 'audio') {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      } else if (this.type === 'video') {
+      } else if (type === 'video') {
         stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
       }
 
@@ -31,12 +49,109 @@ export default class Record {
       this.recorder.addEventListener('stop', () => {
         console.log('recording stopped');
         const blob = new Blob(this.chunks);
-        this.element.src = URL.createObjectURL(blob);
+        element.src = URL.createObjectURL(blob);
       });
 
       this.recorder.start();
     } catch (error) {
-      this.error = error.message;
+      this.error = error;
+      console.log(error);
     }
+  }
+
+  timerRec() {
+    this.min = 0;
+    this.sec = 0;
+
+    this.timerId = setInterval(() => {
+      if (this.sec === 60) {
+        this.min += 1;
+        this.sec = 0;
+      }
+
+      if (this.min < 10 && this.sec < 10) {
+        this.timer.textContent = `0${this.min}:0${this.sec}`;
+      } else if (this.min < 10 && this.sec > 9) {
+        this.timer.textContent = `0${this.min}:${this.sec}`;
+      } else if (this.min > 9 && this.sec < 10) {
+        this.timer.textContent = `${this.min}:0${this.sec}`;
+      } else if (this.min > 9 && this.sec > 9) {
+        this.timer.textContent = `${this.min}:${this.sec}`;
+      }
+      this.sec += 1;
+    }, 1000);
+  }
+
+  async transformButtonsOn() {
+    this.timer.classList.remove('none');
+    this.timerRec();
+    this.videoBtn.classList.remove('organizer-input-video');
+    this.videoBtn.classList.add('image-cancel');
+    this.audioBtn.classList.remove('organizer-input-audio');
+    this.audioBtn.classList.add('image-ok');
+  }
+
+  transformButtonsOff() {
+    this.timer.classList.add('none');
+    this.videoBtn.classList.add('organizer-input-video');
+    this.videoBtn.classList.remove('image-cancel');
+    this.audioBtn.classList.add('organizer-input-audio');
+    this.audioBtn.classList.remove('image-ok');
+  }
+
+  addDataToOrgRecords(record) {
+    // this.organizerRecords.appendChild(record);
+    // Organizer.createDataImage(i, url, name);
+    Organizer.createDataFile(record);
+    if (this.createElement !== null) {
+      this.server.saveMessages({
+        type: 'message',
+        file: this.createElement,
+        date: new Date().getTime(),
+        idName: new Date().getTime(),
+      });
+      this.createElement = null;
+    }
+  }
+
+  async record(type) {
+    this.createElement = document.createElement(type);
+    this.createElement.controls = true;
+    // this.recorder = new Record(this.createElement, type);
+    await this.createRecord(this.createElement, type);
+    console.log(this.recorder);
+    console.log(!window.MediaRecorder || this.error !== null);
+    if (!window.MediaRecorder || this.error !== null) {
+      await notificationBox();
+      this.createElement = null;
+    } else {
+      this.transformButtonsOn();
+    }
+  }
+
+  cancelRecord() {
+    clearInterval(this.timerId);
+    this.min = 0;
+    this.sec = 0;
+    this.timer.textContent = '';
+    this.recorder.stop();
+    this.recorder = null;
+    this.transformButtonsOff();
+  }
+
+  clickAudioVideo(element) {
+    element.addEventListener('click', () => {
+      if (this.timer.classList.contains('none') && element.classList.contains('organizer-input-audio')) {
+        this.record('audio');
+      } else if (this.timer.classList.contains('none') && element.classList.contains('organizer-input-video')) {
+        this.record('video');
+      } else if (!this.timer.classList.contains('none') && element.classList.contains('image-ok')) {
+        this.cancelRecord();
+        const record = Organizer.createRecord(this.createElement);
+        this.addDataToOrgRecords(record);
+      } else if (!this.timer.classList.contains('none') && element.classList.contains('image-cancel')) {
+        this.cancelRecord();
+      }
+    });
   }
 }
