@@ -214,12 +214,15 @@ export default class Organizer {
   static addContent(data, dataLink, dataName, dataDate, newdata) {
     const orgRec = document.querySelector('.organizer-records');
     const divImg = document.createElement('div');
-    const link = document.createElement('a');
-    link.classList.add('link-download');
-    link.setAttribute('download', `${data.alt}`);
-    link.href = dataLink;
     divImg.classList.add('image');
-    divImg.append(link);
+    console.log(data.dataset.type);
+    if (data.dataset.type.includes('image')) {
+      const link = document.createElement('a');
+      link.classList.add('link-download');
+      link.setAttribute('download', `${data.alt}`);
+      link.href = dataLink;
+      divImg.append(link);
+    }
     divImg.append(data);
 
     if (newdata) {
@@ -246,10 +249,11 @@ export default class Organizer {
     if (data.type.includes('audio') || data.type.includes('video')) {
       content.controls = true;
     }
-    content.className = 'drop-image';
+    content.dataset.type = data.type;
+    content.className = `drop-${type}`;
     content.src = dataLink;
     content.alt = data.name;
-    if (data.type === 'image') {
+    if (type === 'img') {
       content.onload = () => Organizer.addContent(content, dataLink, dataName, dataDate, newdata);
     } else {
       Organizer.addContent(content, dataLink, dataName, dataDate, newdata);

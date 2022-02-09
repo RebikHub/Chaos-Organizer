@@ -42,6 +42,7 @@
     "workbox-webpack-plugin": "^6.0.2"
   },
   "dependencies": {
-    "core-js": "^3.20.1"
+    "core-js": "^3.20.1",
+    "ol": "^6.12.0"
   }
 }
