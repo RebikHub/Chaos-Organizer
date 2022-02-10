@@ -29,6 +29,7 @@ export default class Organizer {
     this.organizer.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('record-delete')) {
         const record = ev.target.closest('.record');
+        console.log(record);
         this.server.deleteFile(record.dataset.id);
         if (this.pinnedId === record.dataset.id) {
           this.server.removePinned(this.pinnedId);

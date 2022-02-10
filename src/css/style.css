@@ -19,8 +19,8 @@
         position: relative;
         display: flex;
         width: 600px;
-        height: 600px;
-        /* height: 800px; */
+        /* height: 600px; */
+        height: 800px;
         margin: 20px auto auto auto;
         flex-direction: column;
     }
