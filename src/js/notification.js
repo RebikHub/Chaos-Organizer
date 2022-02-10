@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 export default async function notificationBox() {
-  console.log('notification');
   if (!window.Notification) {
     return;
   }

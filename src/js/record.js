@@ -48,11 +48,8 @@ export default class Record {
 
       this.recorder.addEventListener('stop', async () => {
         console.log('recording stopped');
-        // const blob = new Blob(this.chunks, { type: types });
         const data = await this.chunks[0];
-        console.log(data);
         this.recordFile(data);
-        // element.src = URL.createObjectURL(blob);
       });
 
       this.recorder.start();
@@ -65,10 +62,8 @@ export default class Record {
   async recordFile(blob) {
     const formData = new FormData();
     formData.append('file', blob);
-
     const id = await this.server.saveUploads(formData);
     const url = await this.server.downloadFile(id);
-    console.log(blob, url, id);
     Organizer.createDataContent(blob, url, id);
   }
 
@@ -112,21 +107,6 @@ export default class Record {
     this.audioBtn.classList.remove('image-ok');
   }
 
-  addDataToOrgRecords(record) {
-    // this.organizerRecords.appendChild(record);
-    Organizer.createDataContent(record);
-    // Organizer.createDataFile(record);
-    // if (this.createElement !== null) {
-    //   this.server.saveMessages({
-    //     type: 'message',
-    //     file: this.createElement,
-    //     date: new Date().getTime(),
-    //     idName: new Date().getTime(),
-    //   });
-    this.createElement = null;
-    // }
-  }
-
   async record(type) {
     this.createElement = document.createElement(type);
     this.createElement.controls = true;
@@ -157,8 +137,6 @@ export default class Record {
         this.record('video');
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-ok')) {
         this.cancelRecord();
-        // const record = Organizer.createRecord(this.createElement);
-        // this.addDataToOrgRecords(record);
       } else if (!this.timer.classList.contains('none') && element.classList.contains('image-cancel')) {
         this.cancelRecord();
       }

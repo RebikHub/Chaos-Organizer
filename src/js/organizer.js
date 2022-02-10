@@ -158,15 +158,15 @@ export default class Organizer {
           this.organizer.querySelector('.record-pin').remove();
         }
         const clone = i.cloneNode(true);
-        console.log(clone);
         clone.querySelector('.record-title').classList.add('pin-close');
         clone.querySelector('.pin-close').classList.remove('record-title');
         clone.querySelector('.pin-close').textContent = '';
-        console.log(clone.querySelector('.drop-img'));
+
         if (clone.querySelector('.drop-img')) {
           clone.querySelector('.drop-img').classList.add('pin-image');
           clone.querySelector('.pin-image').classList.remove('drop-img');
         }
+
         if (clone.querySelector('.map')) {
           const geo = document.createElement('div');
           geo.className = 'pin-geo';
@@ -198,11 +198,10 @@ export default class Organizer {
   }
 
   closePinned() {
-    this.organizer.addEventListener('click', async (ev) => {
+    this.organizer.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('pin-close')) {
-        const closePin = await this.server.removePinned(this.pinnedId);
+        this.server.removePinned(this.pinnedId);
         this.pinnedId = null;
-        console.log(closePin, this.pinnedId);
         this.organizer.querySelector('.record-pin').remove();
       }
     });
@@ -245,7 +244,7 @@ export default class Organizer {
     const orgRec = document.querySelector('.organizer-records');
     const divImg = document.createElement('div');
     divImg.classList.add('image');
-    console.log(data.dataset.type);
+
     if (data.dataset.type.includes('image')) {
       const link = document.createElement('a');
       link.classList.add('link-download');
