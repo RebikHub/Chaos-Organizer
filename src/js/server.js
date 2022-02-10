@@ -60,4 +60,9 @@ export default class Server {
     const url = URL.createObjectURL(res);
     return url;
   }
+
+  static async botWeather(lat, lon) {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=hourly,dail&appid=589a0052853cc106e504ea1815b90ca2`);
+    return response.json();
+  }
 }
