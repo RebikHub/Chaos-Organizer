@@ -29,18 +29,24 @@ export default class Server {
   }
 
   async deleteFile(id) {
-    console.log(id);
-    await fetch(`${this.url}/delete/?${id}`);
+    const response = await fetch(`${this.url}/delete/?${id}`);
+    return response.text();
   }
 
-  async loadMessages() {
-    const messages = await fetch(`${this.url}/messages`);
-    return messages.json();
+  async savePinned(id) {
+    await fetch(`${this.url}/pin`, {
+      method: 'POST',
+      body: id,
+    });
   }
 
-  async loadImages() {
-    const images = await fetch(`${this.url}/images`);
-    return images.json();
+  async loadPinned() {
+    const response = await fetch(`${this.url}/pin`);
+    return response.text();
+  }
+
+  async removePinned(id) {
+    await fetch(`${this.url}/removePin/?${id}`);
   }
 
   async downloadFile(name) {
@@ -51,7 +57,6 @@ export default class Server {
       },
     });
     const res = await response.blob();
-    // console.log(res);
     const url = URL.createObjectURL(res);
     return url;
   }

@@ -1,4 +1,6 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable no-await-in-loop */
+import Geo from './geolocation';
 
 export default class Organizer {
   constructor(server) {
@@ -8,12 +10,7 @@ export default class Organizer {
     this.organizerInputText = document.querySelector('.organizer-input-text');
     this.message = null;
     this.enterBtn = document.querySelector('.organizer-input-enter');
-
-    this.modal = document.querySelector('.modal');
-    this.modalInput = document.querySelector('.modal-input-text');
-    this.ok = document.querySelector('.modal-ok');
-    this.cancel = document.querySelector('.modal-cancel');
-    this.error = document.querySelector('.input-error');
+    this.pinnedId = null;
   }
 
   async events() {
@@ -31,8 +28,13 @@ export default class Organizer {
   deleteRecord() {
     this.organizer.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('record-delete')) {
-        this.server.deleteFile(ev.target.parentElement.dataset.id);
-        ev.target.parentElement.parentElement.remove();
+        const record = ev.target.closest('.record');
+        this.server.deleteFile(record.dataset.id);
+        if (this.pinnedId === record.dataset.id) {
+          this.server.removePinned(this.pinnedId);
+          this.organizer.querySelector('.record-pin').remove();
+        }
+        record.remove();
       }
     });
   }
@@ -41,13 +43,15 @@ export default class Organizer {
     const arrRecords = document.querySelectorAll('.record');
     try {
       const store = await this.server.loadStore(arrRecords.length);
-      console.log(store);
       if (store) {
         for (const i of store) {
           const url = await this.server.downloadFile(i.idName);
-          console.log(i.type);
           if (i.type === 'message') {
             this.createDataMessage(i.file, i.idName, i.date, false);
+          } else if (i.type === 'geo') {
+            const map = Geo.createElementMap(i.file);
+            this.createDataMessage(map, i.idName, i.date, false);
+            Geo.initMap(i.file);
           } else if (i.type === 'image') {
             Organizer.createDataContent(i, url, i.idName, i.date, false);
           } else if (i.type === 'audio' || i.type === 'video') {
@@ -57,6 +61,8 @@ export default class Organizer {
           }
         }
         Organizer.scrollToBottom(this.organizerRecords);
+        this.pinnedId = await this.server.loadPinned();
+        this.pinning(this.pinnedId);
       }
     } catch (error) {
       console.log(error);
@@ -134,7 +140,7 @@ export default class Organizer {
       date.textContent = Organizer.getDate();
     }
 
-    recTitle.dataset.id = `${dataName}`;
+    record.dataset.id = `${dataName}`;
     recTitle.append(attach);
     recTitle.append(recDel);
     recTitle.append(date);
@@ -145,34 +151,58 @@ export default class Organizer {
     return record;
   }
 
+  pinning(id) {
+    for (const i of document.querySelectorAll('.record')) {
+      if (i.dataset.id === id) {
+        if (this.organizer.querySelector('.record-pin')) {
+          this.organizer.querySelector('.record-pin').remove();
+        }
+        const clone = i.cloneNode(true);
+        console.log(clone);
+        clone.querySelector('.record-title').classList.add('pin-close');
+        clone.querySelector('.pin-close').classList.remove('record-title');
+        clone.querySelector('.pin-close').textContent = '';
+        console.log(clone.querySelector('.drop-img'));
+        if (clone.querySelector('.drop-img')) {
+          clone.querySelector('.drop-img').classList.add('pin-image');
+          clone.querySelector('.pin-image').classList.remove('drop-img');
+        }
+        if (clone.querySelector('.map')) {
+          const geo = document.createElement('div');
+          geo.className = 'pin-geo';
+          const geoCoords = document.createElement('p');
+          geoCoords.className = 'pin-text';
+          geoCoords.textContent = `Geolocation: ${clone.querySelector('.map').id}`;
+          clone.querySelector('.map').remove();
+          const geoImg = document.createElement('div');
+          geoImg.className = 'pin-img';
+          geo.append(geoImg);
+          geo.append(geoCoords);
+          clone.append(geo);
+        }
+        clone.className = 'record-pin';
+        this.organizer.append(clone);
+      }
+    }
+  }
+
   pinnedContent() {
     this.organizerRecords.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('record-attach')) {
-        const box = ev.target.closest('.record');
-        for (const i of document.querySelectorAll('.record')) {
-          if (i === box) {
-            if (this.organizer.querySelector('.record-pin')) {
-              this.organizer.querySelector('.record-pin').remove();
-            }
-            const clone = i.cloneNode(true);
-            clone.querySelector('.record-title').classList.add('pin-close');
-            clone.querySelector('.pin-close').classList.remove('record-title');
-            clone.querySelector('.pin-close').textContent = '';
-            if (clone.querySelector('.drop-image')) {
-              clone.querySelector('.drop-image').classList.add('pin-image');
-              clone.querySelector('.pin-image').classList.remove('drop-image');
-            }
-            clone.className = 'record-pin';
-            this.organizer.append(clone);
-          }
-        }
+        const { id } = ev.target.closest('.record').dataset;
+        this.server.savePinned(id);
+        this.pinnedId = id;
+        this.pinning(id);
       }
     });
   }
 
   closePinned() {
-    this.organizer.addEventListener('click', (ev) => {
+    this.organizer.addEventListener('click', async (ev) => {
       if (ev.target.classList.contains('pin-close')) {
+        const closePin = await this.server.removePinned(this.pinnedId);
+        this.pinnedId = null;
+        console.log(closePin, this.pinnedId);
         this.organizer.querySelector('.record-pin').remove();
       }
     });
@@ -244,7 +274,7 @@ export default class Organizer {
     } else if (data.type.includes('video')) {
       type = 'video';
     }
-    console.log(data.type.includes('audio'));
+
     const content = document.createElement(type);
     if (data.type.includes('audio') || data.type.includes('video')) {
       content.controls = true;
@@ -266,10 +296,10 @@ export default class Organizer {
     });
   }
 
-  async createIdMessage(message) {
+  static async createIdMessage(message, server, types = 'message') {
     let id = null;
-    id = await this.server.saveMessages({
-      type: 'message',
+    id = await server.saveMessages({
+      type: types,
       file: message,
       date: new Date().getTime(),
     });
@@ -279,7 +309,7 @@ export default class Organizer {
   inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', async (ev) => {
       if (ev.key === 'Enter' && this.message !== null && this.message !== '') {
-        const id = await this.createIdMessage(this.message);
+        const id = await Organizer.createIdMessage(this.message, this.server);
         this.createDataMessage(this.message, id);
       }
     });
@@ -291,7 +321,7 @@ export default class Organizer {
   inputTextClickBtnEnter() {
     this.enterBtn.addEventListener('click', async () => {
       if (this.message !== null && this.organizerInputText.value !== null && this.message !== '') {
-        const id = await this.createIdMessage(this.message);
+        const id = await Organizer.createIdMessage(this.message, this.server);
         this.createDataMessage(this.message, id);
       }
     });

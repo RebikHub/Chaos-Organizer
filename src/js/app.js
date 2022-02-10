@@ -7,7 +7,7 @@ import Geo from './geolocation';
 console.log('app started');
 
 const server = new Server();
-const geo = new Geo();
+const geo = new Geo(server);
 const record = new Record(server);
 const dnd = new DnD(server);
 const organizer = new Organizer(server);
