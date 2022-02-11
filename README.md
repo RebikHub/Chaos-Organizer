@@ -3,33 +3,33 @@
 
 - Сохранение в истории ссылок и текстовых сообщений
 - Ссылки (то, что начинается с http:// или https://) должны быть кликабельны и отображаться как ссылки
-![](/image_readme/link-http.png)
+![](./src/image_readme/link-http.png)
 
 - Сохранение в истории изображений, видео и аудио (как файлов) - через Drag & Drop и через иконку загрузки (скрепка в большинстве мессенджеров)
-![](/image_readme/dnd.png)
-![](/image_readme/upload.png)
+![](./src/image_readme/dnd.png)
+![](./src/image_readme/upload.png)
 
 - Скачивание файлов (на компьютер пользователя)
 ![](/image_readme/download.png)
 
 - Ленивая подгрузка: сначала подгружаются последние 10 сообщений, при прокрутке вверх подгружаются следующие 10 и т.д.
-![](/image_readme/loadmess.png)
-![](/image_readme/loadmess13.png)
+![](./src/image_readme/loadmess.png)
+![](./src/image_readme/loadmess13.png)
 
 - Запись видео и аудио (используя API браузера)
-![](/image_readme/)
+![](./src/image_readme/)
 
 - Воспроизведение видео/аудио (используя API браузера)
-![](/image_readme/)
+![](./src/image_readme/)
 
 - Отправка геолокации с расположением на карте
-![](/image_readme/geo.png)
+![](./src/image_readme/geo.png)
 
 - Закрепление (pin) сообщений, закреплять можно только одно сообщение (прикрепляется к верхней части страницы)
-![](/image_readme/pinned.png)
+![](./src/image_readme/pinned.png)
 
 - Работа в оффлайн-режиме (при это загруженные сообщения должны кэшироваться и быть доступными после обновления страницы)
-![](/image_readme/sw.png)
+![](./src/image_readme/sw.png)
 
 - Показывается погода по текущему месту нахождения по команде @bot
-![](/image_readme/weather.png)
+![](./src/image_readme/weather.png)
