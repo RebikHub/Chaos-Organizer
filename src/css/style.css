@@ -334,14 +334,6 @@ button {
     display: flex;
 }
 
-.img-coordinates {
-    background-image: url(../image/pin.png);
-    width: 16px;
-    height: 16px;
-    margin-left: 3px;
-    align-self: center;
-}
-
 .input-error {
     position: absolute;
     padding: 6px;
@@ -458,10 +450,6 @@ button {
     border: 1px solid black;
     border-radius: 5px;
     background-color: #6363bd;
-}
-
-.weather-date {
-
 }
 
 .weather-info {
