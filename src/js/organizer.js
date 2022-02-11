@@ -29,7 +29,6 @@ export default class Organizer {
     this.organizer.addEventListener('click', (ev) => {
       if (ev.target.classList.contains('record-delete')) {
         const record = ev.target.closest('.record');
-        console.log(record);
         this.server.deleteFile(record.dataset.id);
         if (this.pinnedId === record.dataset.id) {
           this.server.removePinned(this.pinnedId);
@@ -83,7 +82,7 @@ export default class Organizer {
       const lastEl = arrRecords[0].getBoundingClientRect().y;
 
       if (lastEl === 25) {
-        await this.initOrganizer();
+        this.initOrganizer();
       }
     };
   }
@@ -308,7 +307,7 @@ export default class Organizer {
 
   inputTextEnter() {
     this.organizerInputText.addEventListener('keyup', async (ev) => {
-      if (ev.key === 'Enter' && this.message !== null && this.message !== '') {
+      if (ev.key === 'Enter' && this.message !== null && this.message !== '' && this.message !== '@bot') {
         const id = await Organizer.createIdMessage(this.message, this.server);
         this.createDataMessage(this.message, id);
       }
@@ -320,7 +319,7 @@ export default class Organizer {
 
   inputTextClickBtnEnter() {
     this.enterBtn.addEventListener('click', async () => {
-      if (this.message !== null && this.organizerInputText.value !== null && this.message !== '') {
+      if (this.message !== null && this.message !== '' && this.message !== '@bot') {
         const id = await Organizer.createIdMessage(this.message, this.server);
         this.createDataMessage(this.message, id);
       }

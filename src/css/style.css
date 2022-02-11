@@ -262,7 +262,7 @@ button {
 
 .pin-close {
     background-color: aliceblue;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAB/0lEQVRYhe2UzW7TQBSFv/GMs0qwkrgk8ABlA0io/K6oUxYIxBvweLwDDdDSDcuu+JHaikKDgDrYSoIqCLGdYVFHQsAkHm+bs7Svz/l8dXVgqaXOuoTpRaPZfIUQVQfuR1H0tYx5o9E4J4R4AnyP4/jx/2acOd9X0PrqVOuXvu9fKBOOEJsaHmm4bpozAkxc9wHwGrg01XrH9/2LluFd4A7wKZPyoTXAyfHxt4nrbuQQq/kmFkLU63UvD78N9DIpg1G//940b7yBmart9kolSbaAK8C+I0QQRdEXU7hwnC5wC+hlSgWjMDyc578QoChEmfDCAIsg8vBnwE2gl6Xp+mg0+lDEtzCACSJN0x+OlN08/ChL06BouDUAQKvVOp+k6RZwGdgDToA1tD7UWgeDwaBn42cNAP9sAuBommXrw+Hwo63XvCIySo3HCTD+49EvpdSkjJc1QK1Wa0opt4EbwAHwltOe2C7TmFYAnufV3UplU8M14EBAMHHdgJKNCRY34HleXSr1HFgD9gV04jj+DHZl9bcKbaDabq9I192ZhTtCBLNwKF/bYF/Fe44QHdPfldnEXACb8LIQRoC8cF7YhJeBMN5AkiTd3OCdkvJu0XA4vQlXqXvAG2B1Ck9Ns+YjFCIFdpWUnX6/HxYNnykMw76r1Aawi9Y/bb9faqmzo9/RYAwyXCIqYgAAAABJRU5ErkJggg==);
+    background-image: url(../image/cancel.png);
     background-repeat: no-repeat;
     background-position: center;
     width: 20px;
@@ -452,6 +452,36 @@ button {
     width: 354px;
     margin-left: auto;
   }
+
+.weather {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    max-width: -webkit-fill-available;
+    width: fit-content;
+    margin: 4px 0 0 auto;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #6363bd;
+}
+
+.weather-date {
+
+}
+
+.weather-info {
+    display: flex;
+}
+
+.weather-current {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.weather-text {
+    text-align: center;
+}
 
 .none {
     display: none;
