@@ -383,11 +383,21 @@ button {
     object-fit: contain;
 }
 
+.drop-video {
+    width: 400px;
+    height: 225px;
+}
+
 .pin-image {
     width: 90px;
     height: 50px;
     margin-left: 10px;
     align-self: center;
+}
+
+.pin-video {
+    width: 100px;
+    height: 50px;
 }
 
 .drop-file {

@@ -1,6 +1,6 @@
 export default class Server {
   constructor() {
-    this.url = 'http://localhost:3333';
+    this.url = 'https://ahj-organizer.herokuapp.com';
     this.store = new Set();
   }
 

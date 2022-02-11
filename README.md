@@ -1,5 +1,8 @@
 # ahj-organizer-front
 
+[![Build status](https://ci.appveyor.com/api/projects/status/dci12u8fk9v95b72/branch/main?svg=true)](https://ci.appveyor.com/project/RebikHub/ahj-organizer-front/branch/main)
+
+[ORGANIZER](https://rebikhub.github.io/ahj-organizer-front/)
 
 - Сохранение в истории ссылок и текстовых сообщений
 - Ссылки (то, что начинается с http:// или https://) должны быть кликабельны и отображаться как ссылки
@@ -21,12 +24,9 @@
 ![](./src/image_readme/loadmess13.png)
 
 - Запись видео и аудио (используя API браузера)
-
-![](./src/image_readme/)
-
 - Воспроизведение видео/аудио (используя API браузера)
 
-![](./src/image_readme/)
+![](./src/image_readme/media.png)
 
 - Отправка геолокации с расположением на карте
 

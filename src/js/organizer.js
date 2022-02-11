@@ -167,6 +167,11 @@ export default class Organizer {
           clone.querySelector('.pin-image').classList.remove('drop-img');
         }
 
+        if (clone.querySelector('.drop-video')) {
+          clone.querySelector('.drop-video').classList.add('pin-video');
+          clone.querySelector('.pin-video').classList.remove('drop-video');
+        }
+
         if (clone.querySelector('.map')) {
           const geo = document.createElement('div');
           geo.className = 'pin-geo';
