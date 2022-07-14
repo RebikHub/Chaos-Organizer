@@ -2,7 +2,9 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/dci12u8fk9v95b72/branch/main?svg=true)](https://ci.appveyor.com/project/RebikHub/ahj-organizer-front/branch/main)
 
-[ORGANIZER](https://rebikhub.github.io/Chaos-Organizer/)
+[Link to Chaos Organizer](https://rebikhub.github.io/Chaos-Organizer/)
+
+[Серверная часть](https://github.com/RebikHub/ahj-organizer-back)
 
 - Сохранение в истории ссылок и текстовых сообщений
 - Ссылки (то, что начинается с http:// или https://) должны быть кликабельны и отображаться как ссылки
