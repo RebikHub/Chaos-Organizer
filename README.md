@@ -2,6 +2,8 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/dci12u8fk9v95b72/branch/main?svg=true)](https://ci.appveyor.com/project/RebikHub/ahj-organizer-front/branch/main)
 
+[Задание](https://github.com/RebikHub/ahj-diploma)
+
 [Link to Chaos Organizer](https://rebikhub.github.io/Chaos-Organizer/)
 
 [Серверная часть](https://github.com/RebikHub/ahj-organizer-back)
