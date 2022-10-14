@@ -7,7 +7,6 @@ export default class Record {
     this.server = server;
     this.chunks = [];
     this.recorder = null;
-
     this.type = null;
     this.error = null;
     this.audioBtn = document.querySelector('.organizer-input-audio');

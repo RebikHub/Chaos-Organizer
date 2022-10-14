@@ -17,7 +17,6 @@ export default class Geo {
     this.server = server;
     this.geoBtn = document.querySelector('.organizer-input-geo');
     this.organizerRecords = document.querySelector('.organizer-records');
-
     this.coordinates = null;
     this.modal = document.querySelector('.modal');
     this.modalInput = document.querySelector('.modal-input-text');
@@ -29,7 +28,6 @@ export default class Geo {
 
   events() {
     this.clickBtnGeo();
-
     this.inputCoordinates();
     this.clickModalOk();
     this.clickModalCancel();
@@ -119,9 +117,9 @@ export default class Geo {
   async inputCoordinates() {
     this.modalInput.addEventListener('input', async (ev) => {
       const coordinates = ev.target.value;
-      const coorArr = coordinates.split(',');
-      const latitude = coorArr[0].trim();
-      const longitude = coorArr[1].trim();
+      const coordArr = coordinates.split(',');
+      const latitude = coordArr[0].trim();
+      const longitude = coordArr[1].trim();
       if (validate(coordinates)) {
         const coords = [latitude, longitude];
         this.coordinates = coords.reverse();
